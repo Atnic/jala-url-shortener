@@ -7,7 +7,7 @@ export default async function handler(
 ) {
   const { url } = req.body;
 
-  console.log(url);
+  //   console.log(url);
 
   if (!url || url.length <= 0) {
     res.status(400).json({ status: "Error: url is not set" });
@@ -16,7 +16,7 @@ export default async function handler(
 
   const shortUrl = ShortenUrl(5);
 
-  let result = await redis.hset("links", { [shortUrl]: url });
+  let result = await redis.set(`short/${shortUrl}`, url);
   // const events = await fetch(
   //   `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/events?sort%5B0%5D%5Bfield%5D=date`,
   //   {
@@ -29,7 +29,7 @@ export default async function handler(
   //   }
   // );
 
-  console.log(result);
+  //   console.log(result);
 
   // // console.log(peserta.size);
   // const response = await events.json();

@@ -5,12 +5,13 @@ import styles from "@/styles/Home.module.css";
 import { Page } from "@/components/layouts/Page";
 import { PageContent } from "@/components/layouts/PageContent";
 import { Container } from "@/components/layouts/Container";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [value, setValue] = useState("https://syauqy.dev");
+  const [links, setLinks] = useState({});
 
   const handleInputChange = (event: any) => {
     console.log(event);
@@ -31,6 +32,44 @@ export default function Home() {
       body: JSON.stringify({ url: value }),
     });
   };
+
+  const getLinks = async () => {
+    // const response = await fetch("/api/links", {
+    //   method: "GET",
+    // }).then((res) => {
+    //   // console.log(res);
+    //   return res.json();
+    // });
+    // return response;
+    const url = await fetch(
+      `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links?filterByFormula=shortname='abcde'`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
+        },
+      }
+    ).then((res) => {
+      return res.json();
+    });
+    return url;
+  };
+
+  const refreshLinks = async () => {
+    console.log("refresh");
+    const linksObjects = await getLinks();
+    console.log(linksObjects);
+    setLinks(linksObjects);
+  };
+
+  useEffect(() => {
+    // async () => {
+    //   await refreshLinks();
+    // };
+    refreshLinks();
+  }, []);
+
+  console.log(links);
   return (
     <>
       <Head>
@@ -42,11 +81,30 @@ export default function Home() {
       <Page>
         <PageContent>
           <Container>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 text-slate-700 space-y-2 relative pb-16">
               <form className="form flex flex-row" onSubmit={handleSubmit}>
                 <input value={value} onChange={handleInputChange} />
                 <button type="submit">Shorten Url!</button>
               </form>
+              {/* <div className="">
+                {links ? (
+                  Object.keys(links).map((link: any, i) => {
+                    const long = links[link];
+                    return (
+                      <div className="flex flex-row" key={i}>
+                        <div>
+                          <a
+                            href={`http://localhost:3000/${link}`}
+                          >{`http://localhost:3000/${link}`}</a>
+                        </div>
+                        <div></div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <></>
+                )}
+              </div> */}
             </div>
           </Container>
         </PageContent>
