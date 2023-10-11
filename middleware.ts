@@ -3,7 +3,7 @@ import { redis, getUrl } from "./lib/redis";
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname.split("/")[1];
-  if (["favicon.ico", "api", ""].includes(path)) {
+  if (["favicon.ico", "api", "", "login"].includes(path)) {
     return;
   }
 
@@ -25,10 +25,10 @@ export async function middleware(req: NextRequest) {
   //   console.log
   // }
 
-  console.log(url?.records[0]?.fields?.url);
+  // console.log(url?.records[0]?.fields?.url);
 
   if (url?.records[0]?.fields?.url) {
     return NextResponse.redirect(url?.records[0]?.fields?.url);
   }
-  console.log(path);
+  // console.log(path);
 }

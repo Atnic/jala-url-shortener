@@ -2,16 +2,31 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
+import { useSession, signOut, signIn } from "next-auth/react";
 import { Page } from "@/components/layouts/Page";
 import { PageContent } from "@/components/layouts/PageContent";
 import { Container } from "@/components/layouts/Container";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import useSWR from "swr";
+import { JalaLogo, LoadingLogo } from "@/components/icons/JalaLogo";
+import { fetcher } from "@/utils/fetcher";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [value, setValue] = useState("https://syauqy.dev");
   const [links, setLinks] = useState({});
+
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (!session && status == "unauthenticated") {
+      signIn();
+    }
+  }, [session]);
+
+  console.log(session);
 
   const handleInputChange = (event: any) => {
     console.log(event);
