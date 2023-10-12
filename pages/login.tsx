@@ -45,13 +45,9 @@ export default function Login({
               <div className="flex flex-col h-screen backdrop-brightness-50 backdrop-saturate-125">
                 <div className="h-1/2"></div>
                 <div className="flex items-center justify-center flex-1 flex-col space-y-6 px-4 text-white">
-                  <div className="text-2xl font-bold mt-6">
-                    Welcome Warga JALA 👋
-                  </div>
+                  <div className="text-2xl font-bold mt-6">Udan.gg 🍤</div>
                   <div className="text-md text-center">
-                    Everything you need to know about the information and
-                    regulation in JALA.<br></br> But currently only covering
-                    your pay slip 😅
+                    Shorten your link. Only for Warga Jala.
                   </div>
                   <div className="rounded-3xl shadow-lg px-8 py-3 bg-white text-jala-insight font-medium flex">
                     <button

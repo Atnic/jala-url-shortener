@@ -5,7 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { url } = req.body;
+  const { url, owner } = req.body;
 
   //   console.log(url);
 
@@ -16,24 +16,33 @@ export default async function handler(
 
   const shortUrl = ShortenUrl(5);
 
-  let result = await redis.set(`short/${shortUrl}`, url);
-  // const events = await fetch(
-  //   `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/events?sort%5B0%5D%5Bfield%5D=date`,
-  //   {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //     //   body: JSON.stringify(req.body),
-  //   }
-  // );
+  // let result = await redis.set(`short/${shortUrl}`, url);
+  const airtableBody = {
+    records: [
+      {
+        fields: {
+          shortname: shortUrl,
+          url: url,
+          owner: [owner],
+        },
+      },
+    ],
+  };
+
+  const link = await fetch(`${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(airtableBody),
+  });
 
   //   console.log(result);
 
   // // console.log(peserta.size);
   // const response = await events.json();
-  res.status(200).json({ status: "berhasil", result: result });
+  res.status(200).json({ status: "berhasil", result: link });
 }
 
 const ShortenUrl = (length: number) => {
