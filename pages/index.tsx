@@ -53,22 +53,37 @@ export default function Home() {
   //     })
   // );
 
+  // const {
+  //   data: user,
+  //   error: userDataError,
+  //   isLoading: userDataLoading,
+  //   // mutate
+  // } = useSWR(
+  //   session
+  //     ? `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/users?filterByFormula=email='${session?.user?.email}'`
+  //     : null,
+  //   (url) =>
+  //     fetcher(url, {
+  //       headers: {
+  //         Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  // );
+
   const {
     data: user,
     error: userDataError,
     isLoading: userDataLoading,
     // mutate
   } = useSWR(
-    session
-      ? `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/users?filterByFormula=email='${session?.user?.email}'`
-      : null,
-    (url) =>
-      fetcher(url, {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      })
+    session ? `api/user?filterByFormula=email='${session?.user?.email}'` : null,
+    (url) => fetcher(url),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   const links = user?.records[0]?.fields?.links;
