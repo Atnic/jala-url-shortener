@@ -10,7 +10,7 @@ export function LinkItem({ linkId }: any) {
     error: linkDataError,
     isLoading: linkDataLoading,
   } = useSWR(
-    linkId ? `api/links?linkId=${linkId}` : null,
+    linkId ? `api/link?linkId=${linkId}` : null,
     (url) => fetcher(url),
     {
       revalidateIfStale: false,

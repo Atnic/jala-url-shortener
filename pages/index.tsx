@@ -75,7 +75,7 @@ export default function Home() {
     data: user,
     error: userDataError,
     isLoading: userDataLoading,
-    mutate,
+    // mutate,
   } = useSWR(
     session ? `api/user?filterByFormula=email='${session?.user?.email}'` : null,
     (url) => fetcher(url),
@@ -85,6 +85,25 @@ export default function Home() {
       revalidateOnReconnect: false,
     }
   );
+
+  const {
+    data: links,
+    error: linksDataError,
+    isLoading: linksDataLoading,
+    mutate,
+  } = useSWR(
+    user?.records
+      ? `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+      : null,
+    (url) => fetcher(url),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  console.log(user, links);
 
   // const links = user?.records[0]?.fields?.links;
   // const owner = user?.records[0]?.id;
@@ -100,7 +119,9 @@ export default function Home() {
 
     if (shorten.status == 200) {
       setValue("");
-      mutate(`api/user?filterByFormula=email='${session?.user?.email}'`);
+      mutate(
+        `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+      );
     } else if (shorten.status == 400) {
       setError(true);
     }
@@ -141,12 +162,10 @@ export default function Home() {
                 </form>
               </div>
               <div className="flex flex-col gap-4 px-4">
-                {user?.records ? (
-                  user?.records[0]?.fields?.links.map(
-                    (link: any, i: number) => (
-                      <LinkItem key={link} linkId={link} />
-                    )
-                  )
+                {links?.records ? (
+                  links?.records.map((link: any, i: number) => (
+                    <LinkItem key={link.id} linkId={link.id} />
+                  ))
                 ) : (
                   <></>
                 )}

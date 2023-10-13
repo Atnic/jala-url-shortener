@@ -5,13 +5,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { filterByFormula } = req.query;
-  console.log(filterByFormula);
+  const { linkId } = req.query;
   // console.log(linkId);
   // let links = (await redis.get("links")) || [];
 
   const link = await fetch(
-    `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links?filterByFormula=${filterByFormula}&&view=link-view`,
+    `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links/${linkId}`,
     {
       method: "GET",
       headers: {

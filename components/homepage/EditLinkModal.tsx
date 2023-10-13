@@ -55,7 +55,7 @@ export function EditLinkModal({ link }: any) {
           setIsOpen(false);
           setIsSubmitting(false);
           setIsOpen(false);
-          mutate(`api/links?linkId=${link.id}`);
+          mutate(`api/link?linkId=${link.id}`);
           //   router.reload();
         }
       } else {
