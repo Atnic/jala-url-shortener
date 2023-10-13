@@ -29,7 +29,7 @@ export default function Home() {
   // console.log(session);
 
   const handleInputChange = (event: any) => {
-    console.log(event);
+    // console.log(event);
     setValue(event.target.value);
     // const { name, value } = event.target;
     // setProfileData((prevSettings) => ({
@@ -75,7 +75,7 @@ export default function Home() {
     data: user,
     error: userDataError,
     isLoading: userDataLoading,
-    // mutate
+    mutate,
   } = useSWR(
     session ? `api/user?filterByFormula=email='${session?.user?.email}'` : null,
     (url) => fetcher(url),
@@ -86,8 +86,8 @@ export default function Home() {
     }
   );
 
-  const links = user?.records[0]?.fields?.links;
-  const owner = user?.records[0]?.id;
+  // const links = user?.records[0]?.fields?.links;
+  // const owner = user?.records[0]?.id;
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -95,17 +95,19 @@ export default function Home() {
     const shorten = await fetch("/api/shorten", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: value, owner: owner }),
+      body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
     });
 
     if (shorten.status == 200) {
       setValue("");
+      mutate(`api/user?filterByFormula=email='${session?.user?.email}'`);
     } else if (shorten.status == 400) {
       setError(true);
     }
-
-    console.log(shorten);
+    // console.log(shorten);
   };
+
+  // console.log(links, user);
 
   return (
     <>
@@ -139,10 +141,12 @@ export default function Home() {
                 </form>
               </div>
               <div className="flex flex-col gap-4 px-4">
-                {links ? (
-                  links.map((link: any, i: number) => (
-                    <LinkItem key={link} linkId={link} />
-                  ))
+                {user?.records ? (
+                  user?.records[0]?.fields?.links.map(
+                    (link: any, i: number) => (
+                      <LinkItem key={link} linkId={link} />
+                    )
+                  )
                 ) : (
                   <></>
                 )}
