@@ -53,7 +53,7 @@ export function QRLinkModal({ link }: any) {
         <button
           type="button"
           onClick={openModal}
-          className="rounded-full p-2 bg-slate-100 hover:bg-slate-200 hidden md:block"
+          className="rounded-full p-2 bg-slate-100 hover:bg-slate-200"
         >
           <QrCodeIcon className="w-4 h-4 text-slate-500" />
         </button>
