@@ -21,21 +21,12 @@ export function LinkItem({ linkId }: any) {
   const shortlink = link?.fields?.shortname;
   const url = link?.fields?.url;
 
-  const [linkData, setLinkData] = useState({
-    id: linkId || "",
-    shortname: shortlink || "",
-    url: url || "",
-  });
-
-  useEffect(() => {
-    setLinkData({
-      id: linkId,
-      shortname: shortlink,
-      url: url,
-    });
-  }, []);
-
-  if (linkDataLoading) return <div>Loading...</div>;
+  if (linkDataLoading)
+    return (
+      <div className="flex flex-col gap-4 animate-pulse">
+        <div className="bg-slate-300 h-20 w-full rounded"></div>
+      </div>
+    );
 
   // console.log(link, linkData, url, shortlink);
   return (

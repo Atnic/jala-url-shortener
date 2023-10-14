@@ -1,11 +1,13 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { useSWRConfig } from "swr";
 import { Fragment, useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import clsx from "clsx";
 
 export function EditLinkModal({ link }: any) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState(false);
   const [formFilled, setFormFilled] = useState(false);
   const [linkData, setLinkData] = useState({
     id: link.id,
@@ -25,6 +27,8 @@ export function EditLinkModal({ link }: any) {
   }
 
   const submitForm = async (data: any) => {
+    const loadingToast = toast.loading("Edit Your link");
+    setFormError(false);
     try {
       const airtableBody = {
         records: [
@@ -38,31 +42,46 @@ export function EditLinkModal({ link }: any) {
         ],
       };
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(airtableBody),
-        }
-      );
+      const check = await fetch(
+        `api/links?filterByFormula=shortname='${data.shortname}'`
+      ).then((res) => {
+        return res.json();
+      });
+      // console.log(check);
 
-      if (response.ok) {
-        if (response.status == 200) {
+      if (check?.records?.length > 0) {
+        toast.error("The shortname is already taken", { id: loadingToast });
+        setFormError(true);
+        setIsSubmitting(false);
+      } else if (check?.records?.length == 0) {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(airtableBody),
+          }
+        );
+
+        if (response.ok) {
+          if (response.status == 200) {
+            setIsOpen(false);
+            setIsSubmitting(false);
+            setIsOpen(false);
+            mutate(`api/link?linkId=${link.id}`);
+            toast.success("Link edited!", { id: loadingToast });
+            //   router.reload();
+          }
+        } else {
           setIsOpen(false);
           setIsSubmitting(false);
+          console.error("Edit Failed");
           setIsOpen(false);
-          mutate(`api/link?linkId=${link.id}`);
-          //   router.reload();
+          toast.error("Cannot edit Your link", { id: loadingToast });
         }
-      } else {
-        setIsOpen(false);
-        setIsSubmitting(false);
-        console.error("Edit Failed");
-        setIsOpen(false);
       }
     } catch (error) {
       console.error("An error occurred", error);
@@ -83,15 +102,20 @@ export function EditLinkModal({ link }: any) {
       ...prevSettings,
       [name]: value,
     }));
-  };
-
-  useEffect(() => {
     if (linkData.shortname && linkData.url) {
       setFormFilled(true);
     } else {
       setFormFilled(false);
     }
-  }, [linkData]);
+  };
+
+  // useEffect(() => {
+  //   // if (linkData.shortname && linkData.url) {
+  //   //   setFormFilled(true);
+  //   // } else {
+  //   //   setFormFilled(false);
+  //   // }
+  // }, [linkData]);
 
   return (
     <>
@@ -133,9 +157,15 @@ export function EditLinkModal({ link }: any) {
                 <Dialog.Panel className="w-full  max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900 py-2 border-b"
+                    className="flex flex-row items-center justify-between text-lg font-medium leading-6 text-gray-900 py-2 border-b"
                   >
-                    Edit /{shortlink}
+                    <div>Edit /{shortlink}</div>
+                    <button
+                      onClick={closeModal}
+                      className="px-3 py-2 bg-red-100 rounded-md text-xs text-red-600"
+                    >
+                      Close
+                    </button>
                   </Dialog.Title>
                   <div className="py-4">
                     <form
@@ -168,22 +198,27 @@ export function EditLinkModal({ link }: any) {
                               <input
                                 type="text"
                                 name="shortname"
-                                className="block w-full rounded-r-md text-slate-600 border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50"
+                                className={clsx(
+                                  formError
+                                    ? "border-red-300 border-2"
+                                    : "border-gray-300 ",
+                                  "block w-full rounded-r-md text-slate-600 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50"
+                                )}
                                 value={linkData.shortname}
                                 onChange={handleInputChange}
                               />
                             </div>
+                            {formError && (
+                              <div className="text-red-400 text-sm">
+                                Shortname is already taken. Please use another
+                                name.
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
 
                       <div className="flex flex-row gap-2">
-                        <button
-                          onClick={() => setIsOpen(false)}
-                          className="bg-red-400 text-white py-2 rounded-md  w-full text-center font-medium disabled:bg-slate-300 disabled:text-slate-400"
-                        >
-                          Cancel
-                        </button>
                         <button
                           type="submit"
                           disabled={isSubmitting || !formFilled}
@@ -191,7 +226,7 @@ export function EditLinkModal({ link }: any) {
                             isSubmitting
                               ? "bg-slate-300 "
                               : "bg-jala-insight text-white",
-                            "py-2 rounded-md  w-full text-center font-medium disabled:bg-slate-300 disabled:text-slate-400"
+                            "py-2 rounded-md  w-full text-center font-medium disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed"
                           )}
                         >
                           Edit link
@@ -205,6 +240,7 @@ export function EditLinkModal({ link }: any) {
           </div>
         </Dialog>
       </Transition>
+      <Toaster />
     </>
   );
 }

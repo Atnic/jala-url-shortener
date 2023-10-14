@@ -2,6 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
+import toast, { Toaster } from "react-hot-toast";
 import { useSession, signOut, signIn } from "next-auth/react";
 import { Page } from "@/components/layouts/Page";
 import { PageContent } from "@/components/layouts/PageContent";
@@ -12,10 +13,12 @@ import useSWR from "swr";
 import { JalaLogo, LoadingLogo } from "@/components/icons/JalaLogo";
 import { LinkItem } from "@/components/homepage/LinkItem";
 import { fetcher } from "@/utils/fetcher";
+import clsx from "clsx";
 
 export default function Home() {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // const [links, setLinks] = useState({});
 
   const { data: session, status } = useSession();
@@ -37,39 +40,6 @@ export default function Home() {
     //   [name]: value,
     // }));
   };
-
-  // const {
-  //   data: link,
-  //   error: linkDataError,
-  //   isLoading: linkDataLoading,
-  // } = useSWR(
-  //   session ? `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links?` : null,
-  //   (url) =>
-  //     fetcher(url, {
-  //       headers: {
-  //         Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  // );
-
-  // const {
-  //   data: user,
-  //   error: userDataError,
-  //   isLoading: userDataLoading,
-  //   // mutate
-  // } = useSWR(
-  //   session
-  //     ? `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/users?filterByFormula=email='${session?.user?.email}'`
-  //     : null,
-  //   (url) =>
-  //     fetcher(url, {
-  //       headers: {
-  //         Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  // );
 
   const {
     data: user,
@@ -103,13 +73,16 @@ export default function Home() {
     }
   );
 
-  console.log(user, links);
+  // console.log(user, links);
 
   // const links = user?.records[0]?.fields?.links;
   // const owner = user?.records[0]?.id;
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
+    const loadingToast = toast.loading("Shorten Your link");
 
     const shorten = await fetch("/api/shorten", {
       method: "POST",
@@ -122,8 +95,12 @@ export default function Home() {
       mutate(
         `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
       );
+      toast.success("Link shorted!", { id: loadingToast });
+      setIsSubmitting(false);
     } else if (shorten.status == 400) {
       setError(true);
+      setIsSubmitting(false);
+      toast.error("Cannot shorten Your link", { id: loadingToast });
     }
     // console.log(shorten);
   };
@@ -154,8 +131,12 @@ export default function Home() {
                     onChange={handleInputChange}
                   />
                   <button
-                    className="absolute right-1.5 bottom-1.5 px-4 py-1 rounded-md border text-sm font-semibold border-slate-200"
+                    className={clsx(
+                      isSubmitting ? "bg-slate-300 " : "bg-white",
+                      "absolute right-1.5 bottom-1.5 px-4 py-1 rounded-md border text-sm font-semibold border-slate-200 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed "
+                    )}
                     type="submit"
+                    disabled={isSubmitting}
                   >
                     Shorten! 🍤
                   </button>
@@ -164,13 +145,14 @@ export default function Home() {
               <div className="flex flex-col gap-4 px-4">
                 {links?.records ? (
                   links?.records.map((link: any, i: number) => (
-                    <LinkItem key={link.id} linkId={link.id} />
+                    <LinkItem key={link.id} linkId={link.id} link={link} />
                   ))
                 ) : (
                   <></>
                 )}
               </div>
             </div>
+            <Toaster />
           </Container>
         </PageContent>
       </Page>

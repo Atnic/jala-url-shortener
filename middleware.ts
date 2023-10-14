@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { redis, getUrl } from "./lib/redis";
+// import { redis, getUrl } from "./lib/redis";
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname.split("/")[1];
-  if (["favicon.ico", "api", "", "login"].includes(path)) {
-    return;
-  }
+  // if (["favicon.ico", "api", "", "login"].includes(path)) {
+  //   return;
+  // }
 
   // const url = await getUrl(path);
 
@@ -32,3 +32,9 @@ export async function middleware(req: NextRequest) {
   }
   // console.log(path);
 }
+
+export const config = {
+  matcher: [
+    "/((?!api|_next/static|_next/image|auth|favicon.ico|robots.txt|images|$).*)",
+  ],
+};
