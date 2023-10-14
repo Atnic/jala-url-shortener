@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import useSWR from "swr";
 import { EditLinkModal } from "./EditLinkModal";
+import toast, { Toaster } from "react-hot-toast";
 import { fetcher } from "@/utils/fetcher";
+import { DeleteLinkModal } from "./DeleteLinkModal";
+import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 
 export function LinkItem({ linkId }: any) {
   //   console.log(linkId);
@@ -21,6 +24,25 @@ export function LinkItem({ linkId }: any) {
   const shortlink = link?.fields?.shortname;
   const url = link?.fields?.url;
 
+  const copyToClipboard = async (e: any) => {
+    e.preventDefault();
+    // console.log(e);
+    let text = document.getElementById("shortlink")?.innerHTML;
+
+    const copyContent = async () => {
+      try {
+        await navigator.clipboard.writeText(text ? text : "");
+        toast.success(`${text} copied`);
+        // console.log("shortlink copied to clipboard");
+      } catch (err) {
+        toast.success(`Failed to copy ${err}`);
+        console.error("Failed to copy: ", err);
+      }
+    };
+
+    copyContent();
+  };
+
   if (linkDataLoading)
     return (
       <div className="flex flex-col gap-4 animate-pulse">
@@ -37,11 +59,18 @@ export function LinkItem({ linkId }: any) {
             <a
               href={`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}`}
               target="_blank"
+              id="shortlink"
             >
               {`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}`}
             </a>
           </div>
-          <div className="rounded-full p-3 bg-slate-200"></div>
+          <button
+            className="rounded-full p-2 bg-slate-100 hover:bg-sky-100"
+            onClick={copyToClipboard}
+          >
+            <DocumentDuplicateIcon className="w-4 h-4 text-jala-insight" />
+          </button>
+          <DeleteLinkModal link={link} />
         </div>
 
         <div className="text-sm hover:underline text-slate-500 hover:text-slate-800">
@@ -51,6 +80,7 @@ export function LinkItem({ linkId }: any) {
         </div>
       </div>
       <EditLinkModal link={link} />
+      <Toaster />
     </div>
   );
 }

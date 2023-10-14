@@ -150,6 +150,14 @@ export default function Home() {
                 ) : (
                   <></>
                 )}
+                {links?.records == 0 ? (
+                  <div className="px-2 text-slate-600 text-sm text-center">
+                    No shortlink. Create your first shortlink by pasting your
+                    url on the form above.
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
             <Toaster />

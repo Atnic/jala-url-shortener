@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname.split("/")[1];
-  // if (["favicon.ico", "api", "", "login"].includes(path)) {
-  //   return;
-  // }
+  if (["favicon.ico", "api", "", "login"].includes(path)) {
+    return;
+  }
 
   // const url = await getUrl(path);
 

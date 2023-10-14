@@ -1,8 +1,12 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { useSWRConfig } from "swr";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import clsx from "clsx";
+import {
+  PencilSquareIcon,
+  EllipsisVerticalIcon,
+} from "@heroicons/react/24/outline";
 
 export function EditLinkModal({ link }: any) {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,7 +74,6 @@ export function EditLinkModal({ link }: any) {
           if (response.status == 200) {
             setIsOpen(false);
             setIsSubmitting(false);
-            setIsOpen(false);
             mutate(`api/link?linkId=${link.id}`);
             toast.success("Link edited!", { id: loadingToast });
             //   router.reload();
@@ -79,7 +82,6 @@ export function EditLinkModal({ link }: any) {
           setIsOpen(false);
           setIsSubmitting(false);
           console.error("Edit Failed");
-          setIsOpen(false);
           toast.error("Cannot edit Your link", { id: loadingToast });
         }
       }
@@ -123,9 +125,10 @@ export function EditLinkModal({ link }: any) {
         <button
           type="button"
           onClick={openModal}
-          className="rounded-md px-4 py-2 text-sm font-medium text-slate-500 shadow-sm "
+          className="rounded-md p-2 text-sm font-medium text-slate-500 shadow-sm hover:bg-slate-100"
         >
-          Edit
+          <PencilSquareIcon className="w-4 h-4 hidden md:block" />
+          <EllipsisVerticalIcon className="w-4 h-4 block md:hidden" />
         </button>
       </div>
 
