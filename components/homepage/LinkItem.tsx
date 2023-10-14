@@ -4,6 +4,7 @@ import { EditLinkModal } from "./EditLinkModal";
 import toast, { Toaster } from "react-hot-toast";
 import { fetcher } from "@/utils/fetcher";
 import { DeleteLinkModal } from "./DeleteLinkModal";
+import { QRLinkModal } from "./QRLinkModal";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 
 export function LinkItem({ linkId }: any) {
@@ -27,7 +28,7 @@ export function LinkItem({ linkId }: any) {
   const copyToClipboard = async (e: any) => {
     e.preventDefault();
     // console.log(e);
-    let text = document.getElementById("shortlink")?.innerHTML;
+    let text = document.getElementById(`shortlink-${shortlink}`)?.innerHTML;
 
     const copyContent = async () => {
       try {
@@ -59,7 +60,7 @@ export function LinkItem({ linkId }: any) {
             <a
               href={`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}`}
               target="_blank"
-              id="shortlink"
+              id={`shortlink-${shortlink}`}
             >
               {`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}`}
             </a>
@@ -70,7 +71,8 @@ export function LinkItem({ linkId }: any) {
           >
             <DocumentDuplicateIcon className="w-4 h-4 text-jala-insight" />
           </button>
-          <DeleteLinkModal link={link} />
+          <QRLinkModal link={link} />
+          {/* <DeleteLinkModal link={link} /> */}
         </div>
 
         <div className="text-sm hover:underline text-slate-500 hover:text-slate-800">

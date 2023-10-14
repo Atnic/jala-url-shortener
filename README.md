@@ -15,4 +15,5 @@
 - [x] Notif toast when error to create link
 - [x] cannot edit name when shortname is already avalailable
 - [x] Error message when no link
-- [ ] Add QR code generator
+- [x] Add QR code generator
+- [x] Empty link handler
