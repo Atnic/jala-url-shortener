@@ -8,10 +8,10 @@ import { PageContent } from "@/components/layouts/PageContent";
 import { Container } from "@/components/layouts/Container";
 import { GoogleLogo } from "@/components/icons/JalaLogo";
 import { LoadingLogo } from "@/components/icons/JalaLogo";
-import type {
-  GetServerSidePropsContext,
-  InferGetServerSidePropsType,
-} from "next";
+// import type {
+//   GetServerSidePropsContext,
+//   InferGetServerSidePropsType,
+// } from "next";
 // import { getCsrfToken } from "next-auth/react";
 // import { LoginNIKDisclosure } from "@/components/login/LoginNIKDisclosure";
 
