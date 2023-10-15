@@ -17,3 +17,4 @@
 - [x] Error message when no link
 - [x] Add QR code generator
 - [x] Empty link handler
+- [ ] favicon
