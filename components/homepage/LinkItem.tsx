@@ -51,14 +51,14 @@ export function LinkItem({ linkId }: any) {
       </div>
     );
 
-  // console.log(link, linkData, url, shortlink);
+  console.log(shortlink);
   return (
     <div className="flex flex-row justify-between px-4 py-3 rounded-md shadow-md w-full">
       <div className="flex flex-col gap-1 w-3/4">
         <div className="flex flex-row gap-2 items-center">
           <div className="text-jala-insight font-semibold">
             <a
-              href={`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}`}
+              href={`/${shortlink}`}
               target="_blank"
               id={`shortlink-${shortlink}`}
             >
