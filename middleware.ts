@@ -3,9 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname.split("/")[1];
-  if (["favicon.ico", "api", "", "login"].includes(path)) {
+  if (["favicon.ico", "api", "", "login", "404"].includes(path)) {
     return;
   }
+
+  const link404 = req.nextUrl;
+
+  link404.pathname = `/404`;
 
   // const url = await getUrl(path);
 
@@ -25,10 +29,14 @@ export async function middleware(req: NextRequest) {
   //   console.log
   // }
 
+  // console.log(url);
+
   // console.log(url?.records[0]?.fields?.url);
 
   if (url?.records[0]?.fields?.url) {
     return NextResponse.redirect(url?.records[0]?.fields?.url);
+  } else {
+    return NextResponse.redirect(link404);
   }
   // console.log(path);
 }

@@ -4,11 +4,11 @@
 - [ ] Login page layout and design
 - [x] User authentication
 - [x] Fetch links based on profile
-- [ ] Profile navbar
+- [x] Profile navbar
 - [x] Edit link
 - [x] Delete link
 - [x] Copy link to clipboard
-- [ ] Links page layout and design
+- [x] Links page layout and design
 - [ ] 404 page
 - [x] Notif toast when create new link
 - [x] Notif toast when edit link

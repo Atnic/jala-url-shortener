@@ -8,6 +8,7 @@ import { Page } from "@/components/layouts/Page";
 import { PageContent } from "@/components/layouts/PageContent";
 import { Container } from "@/components/layouts/Container";
 import { useEffect, useState } from "react";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import useSWR from "swr";
 import { JalaLogo, LoadingLogo } from "@/components/icons/JalaLogo";
@@ -75,6 +76,8 @@ export default function Home() {
 
   // console.log(user, links);
 
+  // console.log(session);
+
   // const links = user?.records[0]?.fields?.links;
   // const owner = user?.records[0]?.id;
 
@@ -119,6 +122,24 @@ export default function Home() {
         <PageContent>
           <Container>
             <div className="flex flex-col gap-4 text-slate-700 space-y-2 relative py-16">
+              <div className="flex px-4 justify-between items-center">
+                <div className="text-2xl font-bold ">
+                  Hi {session?.user?.name} 👋
+                </div>
+                <div className="text-amber-500 font-medium ">
+                  <button
+                    onClick={() => signOut()}
+                    className="flex hover:-translate-y-1 hover:text-amber-400 delay-100 ease-in-out"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-6 w-6 mr-1" />
+                    Sign out
+                  </button>
+                </div>
+              </div>
+              <div className="px-4 text-sm text-slate-400">
+                Copy and paste your long link on the form below and click
+                shorten!
+              </div>
               <div className="px-4">
                 <form
                   className="form flex flex-row gap-2 relative"

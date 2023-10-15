@@ -53,8 +53,8 @@ export function LinkItem({ linkId }: any) {
 
   // console.log(link, linkData, url, shortlink);
   return (
-    <div className="flex flex-row justify-between px-4 py-3 rounded-md shadow-md">
-      <div className="flex flex-col gap-1 ">
+    <div className="flex flex-row justify-between px-4 py-3 rounded-md shadow-md w-full">
+      <div className="flex flex-col gap-1 w-3/4">
         <div className="flex flex-row gap-2 items-center">
           <div className="text-jala-insight font-semibold">
             <a
@@ -75,8 +75,8 @@ export function LinkItem({ linkId }: any) {
           {/* <DeleteLinkModal link={link} /> */}
         </div>
 
-        <div className="text-sm hover:underline text-slate-500 hover:text-slate-800">
-          <a href={url} target="_blank">
+        <div className="text-sm hover:underline text-slate-500 hover:text-slate-800 truncate">
+          <a href={url} target="_blank" className="">
             {url}
           </a>
         </div>
