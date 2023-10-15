@@ -17,5 +17,5 @@
 - [x] Error message when no link
 - [x] Add QR code generator
 - [x] Empty link handler
-- [ ] favicon
+- [x] favicon
 - [x] Add click/visit counter
