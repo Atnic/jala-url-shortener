@@ -1,7 +1,7 @@
 #### To-dos
 
 - [x] Redirect link using middleware
-- [ ] Login page layout and design
+- [x] Login page layout and design
 - [x] User authentication
 - [x] Fetch links based on profile
 - [x] Profile navbar
@@ -9,7 +9,7 @@
 - [x] Delete link
 - [x] Copy link to clipboard
 - [x] Links page layout and design
-- [ ] 404 page
+- [x] 404 page
 - [x] Notif toast when create new link
 - [x] Notif toast when edit link
 - [x] Notif toast when error to create link
