@@ -3,12 +3,9 @@ import useSWR from "swr";
 import { EditLinkModal } from "./EditLinkModal";
 import toast, { Toaster } from "react-hot-toast";
 import { fetcher } from "@/utils/fetcher";
-import { DeleteLinkModal } from "./DeleteLinkModal";
 import { QRLinkModal } from "./QRLinkModal";
 import {
   DocumentDuplicateIcon,
-  CursorArrowRaysIcon,
-  ChartBarSquareIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/outline";
 

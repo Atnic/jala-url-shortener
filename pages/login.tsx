@@ -12,12 +12,10 @@ import type {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
 } from "next";
-import { getCsrfToken } from "next-auth/react";
+// import { getCsrfToken } from "next-auth/react";
 // import { LoginNIKDisclosure } from "@/components/login/LoginNIKDisclosure";
 
-export default function Login({
-  csrfToken,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Login({}) {
   const { data: session, status } = useSession();
   const router = useRouter();
   // const error = router.query?.error;
@@ -49,8 +47,11 @@ export default function Login({
                 <div className="flex items-center justify-center flex-1 flex-col space-y-10 px-6 pt-10 text-slate-800">
                   <div className="text-5xl font-bold mt-6">Jala.cc 🍤</div>
                   <div className="text-xl text-center">
-                    Create a custom short links and QR Codes. Only for Warga
-                    Jala.
+                    Create a custom short links and QR Codes.
+                    <br></br>
+                    Share it anywhere, track the clicks.
+                    <br></br>
+                    Only for Warga Jala.
                   </div>
                 </div>
                 <div className="h-3/4 bg-[url('https://strapi.jala.tech/uploads/aldy_uang_54eb8b35f2.png')] bg-center bg-cover max-h-screen">
@@ -97,10 +98,10 @@ export default function Login({
 //   };
 // };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  return {
-    props: {
-      csrfToken: await getCsrfToken(context),
-    },
-  };
-}
+// export async function getServerSideProps(context: GetServerSidePropsContext) {
+//   return {
+//     props: {
+//       csrfToken: await getCsrfToken(context),
+//     },
+//   };
+// }

@@ -1,5 +1,4 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { useSWRConfig } from "swr";
 import { Fragment, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { TrashIcon } from "@heroicons/react/24/outline";
@@ -15,7 +14,6 @@ export function DeleteLinkModal({ link }: any) {
   //   shortname: link?.fields?.shortname,
   //   url: link?.fields?.url,
   // });
-  const { mutate } = useSWRConfig();
 
   // const shortlink = link?.fields?.shortname;
 
@@ -71,7 +69,7 @@ export function DeleteLinkModal({ link }: any) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25 blur-sm" />
+            <div className="fixed inset-0 bg-white bg-opacity-80 blur-sm" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">

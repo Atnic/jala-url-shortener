@@ -7,6 +7,7 @@ import {
   PencilSquareIcon,
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
+import { DeleteLinkModal } from "./DeleteLinkModal";
 
 export function EditLinkModal({ link }: any) {
   const [isOpen, setIsOpen] = useState(false);
@@ -163,12 +164,15 @@ export function EditLinkModal({ link }: any) {
                     className="flex flex-row items-center justify-between text-lg font-medium leading-6 text-gray-900 py-2 border-b"
                   >
                     <div>Edit /{shortlink}</div>
-                    <button
-                      onClick={closeModal}
-                      className="px-3 py-2 bg-red-100 rounded-md text-xs text-red-600"
-                    >
-                      Close
-                    </button>
+                    <div className="flex flex-row items-center gap-2">
+                      <DeleteLinkModal link={link} />
+                      <button
+                        onClick={closeModal}
+                        className="px-3 py-2 bg-slate-100 rounded-md text-xs text-slate-600"
+                      >
+                        Close
+                      </button>
+                    </div>
                   </Dialog.Title>
                   <div className="py-4">
                     <form

@@ -18,3 +18,4 @@
 - [x] Add QR code generator
 - [x] Empty link handler
 - [ ] favicon
+- [x] Add click/visit counter
