@@ -28,13 +28,47 @@ export async function middleware(req: NextRequest) {
   // if(url){
   //   console.log
   // }
+  // if (url?.records[0]?.fields?.url) {
+  //   console.log("count", url?.records[0]?.fields?.visit_count + 1);
+  // }
 
   // console.log(url);
 
   // console.log(url?.records[0]?.fields?.url);
 
   if (url?.records[0]?.fields?.url) {
-    return NextResponse.redirect(url?.records[0]?.fields?.url);
+    const airtableBody = {
+      records: [
+        {
+          id: url.records[0].id,
+          fields: {
+            // shortname: url.records[0].fields.shortname,
+            // url: url.records[0].fields.url,
+            visit_count: url.records[0].fields.visit_count + 1,
+          },
+        },
+      ],
+    };
+
+    console.log(airtableBody);
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(airtableBody),
+      }
+    );
+
+    // console.log(response);
+    if (response.ok) {
+      // console.log(response.status);
+      return NextResponse.redirect(url?.records[0]?.fields?.url);
+    }
   } else {
     return NextResponse.redirect(link404);
   }
