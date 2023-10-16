@@ -6,7 +6,7 @@ import { PageContent } from "@/components/layouts/PageContent";
 import { Container } from "@/components/layouts/Container";
 import { useEffect, useState } from "react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { LoadingLogo } from "@/components/icons/JalaLogo";
 import { LinkItem } from "@/components/homepage/LinkItem";
 import { fetcher } from "@/utils/fetcher";
@@ -25,6 +25,8 @@ export default function Home() {
       signIn();
     }
   }, [session]);
+
+  const { mutate } = useSWRConfig();
 
   // console.log(session);
 
@@ -57,9 +59,9 @@ export default function Home() {
     data: links,
     error: linksDataError,
     isLoading: linksDataLoading,
-    mutate,
+    // mutate,
   } = useSWR(
-    user?.records
+    user?.records[0]
       ? `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
       : null,
     (url) => fetcher(url),
@@ -69,6 +71,47 @@ export default function Home() {
       revalidateOnReconnect: false,
     }
   );
+
+  // console.log(user, links, session?.user);
+
+  const CreateAccount = async () => {
+    try {
+      const airtableBody = {
+        records: [
+          {
+            fields: {
+              name: session?.user?.name,
+              email: session?.user?.email,
+            },
+          },
+        ],
+      };
+      const response = await fetch(user?.records[0] ? "" : `/api/register`, {
+        method: "POST",
+        body: JSON.stringify(airtableBody),
+      });
+      if (response.ok) {
+        toast.success("Account created!");
+        mutate(`api/user?filterByFormula=email='${session?.user?.email}'`);
+        mutate(
+          `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+        );
+        console.log("new account created!");
+      } else {
+        console.error("Registration Failed");
+      }
+    } catch (error) {
+      console.error("An error occurred", error);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    if (session?.user?.email && !user?.records[0]) {
+      // console.log("non user");
+      CreateAccount();
+    }
+  }, [user]);
 
   // console.log(user, links);
 
@@ -153,7 +196,7 @@ export default function Home() {
         <Page>
           <PageContent>
             <Container>
-              <div className="flex flex-col gap-4 text-slate-700 space-y-2 relative py-16">
+              <div className="flex flex-col gap-4 text-slate-700 space-y-2 relative py-8">
                 <div className="flex px-4 justify-between items-center">
                   <div className="text-2xl font-bold ">
                     Hi {session?.user?.name} 👋
