@@ -6,7 +6,7 @@ import { PageContent } from "@/components/layouts/PageContent";
 import { Container } from "@/components/layouts/Container";
 import { useEffect, useState } from "react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { LoadingLogo } from "@/components/icons/JalaLogo";
 import { LinkItem } from "@/components/homepage/LinkItem";
 import { fetcher } from "@/utils/fetcher";
@@ -16,6 +16,7 @@ export default function Home() {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [inputCorrection, setInputCorrection] = useState(false);
   // const [links, setLinks] = useState({});
 
   const { data: session, status } = useSession();
@@ -25,6 +26,8 @@ export default function Home() {
       signIn();
     }
   }, [session]);
+
+  const { mutate } = useSWRConfig();
 
   // console.log(session);
 
@@ -57,9 +60,9 @@ export default function Home() {
     data: links,
     error: linksDataError,
     isLoading: linksDataLoading,
-    mutate,
+    // mutate,
   } = useSWR(
-    user?.records
+    user?.records[0]
       ? `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
       : null,
     (url) => fetcher(url),
@@ -69,6 +72,47 @@ export default function Home() {
       revalidateOnReconnect: false,
     }
   );
+
+  // console.log(user, links, session?.user);
+
+  const CreateAccount = async () => {
+    try {
+      const airtableBody = {
+        records: [
+          {
+            fields: {
+              name: session?.user?.name,
+              email: session?.user?.email,
+            },
+          },
+        ],
+      };
+      const response = await fetch(user?.records[0] ? "" : `/api/register`, {
+        method: "POST",
+        body: JSON.stringify(airtableBody),
+      });
+      if (response.ok) {
+        toast.success("Account created!");
+        mutate(`api/user?filterByFormula=email='${session?.user?.email}'`);
+        mutate(
+          `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+        );
+        console.log("new account created!");
+      } else {
+        console.error("Registration Failed");
+      }
+    } catch (error) {
+      console.error("An error occurred", error);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    if (session?.user?.email && !user?.records[0]) {
+      // console.log("non user");
+      CreateAccount();
+    }
+  }, [user]);
 
   // console.log(user, links);
 
@@ -80,14 +124,32 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsSubmitting(true);
+    let shorten;
 
     const loadingToast = toast.loading("Shorten Your link");
 
-    const shorten = await fetch("/api/shorten", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
-    });
+    if (value.includes("https://")) {
+      shorten = await fetch("/api/shorten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
+      });
+    } else {
+      shorten = await fetch("/api/shorten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: `https://${value}`,
+          owner: user?.records[0]?.id,
+        }),
+      });
+    }
+
+    // const shorten = await fetch("/api/shorten", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
+    // });
 
     if (shorten.status == 200) {
       setValue("");
@@ -101,17 +163,54 @@ export default function Home() {
       setIsSubmitting(false);
       toast.error("Cannot shorten Your link", { id: loadingToast });
     }
-    // console.log(shorten);
   };
 
   if (userDataLoading || linksDataLoading) {
-    <Page>
-      <PageContent>
-        <Container>
-          <LoadingLogo />
-        </Container>
-      </PageContent>
-    </Page>;
+    return (
+      <Page>
+        <PageContent>
+          <Container>
+            <div className="flex flex-col items-center justify-center  h-[100svh]">
+              <div className="text-5xl animate-spin">🍤</div>
+            </div>
+          </Container>
+        </PageContent>
+      </Page>
+    );
+  }
+
+  if (userDataError) {
+    return (
+      <Page>
+        <PageContent>
+          <Container>
+            <div className="flex flex-col items-center justify-center  h-[100svh]">
+              <div className="text-xl animate-spin">
+                Cannot get the user data. Please check your connection or try to
+                refresh the page
+              </div>
+            </div>
+          </Container>
+        </PageContent>
+      </Page>
+    );
+  }
+
+  if (linksDataError) {
+    return (
+      <Page>
+        <PageContent>
+          <Container>
+            <div className="flex flex-col items-center justify-center  h-[100svh]">
+              <div className="text-xl animate-spin">
+                Cannot get the links data. Please check your connection or try
+                to refresh the page
+              </div>
+            </div>
+          </Container>
+        </PageContent>
+      </Page>
+    );
   }
 
   // console.log(links, user);
@@ -120,14 +219,40 @@ export default function Home() {
       <>
         <Head>
           <title>Jala.cc Url Shortener</title>
-          <meta name="description" content="Jala.cc Url Shortener" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
+          <meta
+            name="description"
+            content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+          />
+
+          <meta property="og:url" content="https://jala.cc" />
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content="Jala.cc Url Shortener" />
+          <meta
+            property="og:description"
+            content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+          />
+          <meta
+            property="og:image"
+            content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
+          />
+
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="twitter:domain" content="jala.cc" />
+          <meta property="twitter:url" content="https://jala.cc" />
+          <meta name="twitter:title" content="Jala.cc Url Shortener" />
+          <meta
+            name="twitter:description"
+            content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+          />
+          <meta
+            name="twitter:image"
+            content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
+          />
         </Head>
         <Page>
           <PageContent>
             <Container>
-              <div className="flex flex-col gap-4 text-slate-700 space-y-2 relative py-16">
+              <div className="flex flex-col gap-4 text-slate-700 space-y-2 relative py-8">
                 <div className="flex px-4 justify-between items-center">
                   <div className="text-2xl font-bold ">
                     Hi {session?.user?.name} 👋
@@ -172,7 +297,7 @@ export default function Home() {
                 <div className="flex flex-col gap-4 px-4">
                   {links?.records ? (
                     links?.records.map((link: any, i: number) => (
-                      <LinkItem key={link.id} linkId={link.id} link={link} />
+                      <LinkItem key={link.id} linkId={link.id} />
                     ))
                   ) : (
                     <></>

@@ -19,6 +19,11 @@ export function EditLinkModal({ link }: any) {
     shortname: link?.fields?.shortname,
     url: link?.fields?.url,
   });
+  const [editedLinkData, setEditedLinkData] = useState({
+    id: link.id,
+    shortname: link?.fields?.shortname,
+    url: link?.fields?.url,
+  });
   const { mutate } = useSWRConfig();
 
   const shortlink = link?.fields?.shortname;
@@ -34,6 +39,8 @@ export function EditLinkModal({ link }: any) {
   const submitForm = async (data: any) => {
     const loadingToast = toast.loading("Edit Your link");
     setFormError(false);
+    let checkShortname;
+    let submitForm;
     try {
       const airtableBody = {
         records: [
@@ -47,19 +54,14 @@ export function EditLinkModal({ link }: any) {
         ],
       };
 
-      const check = await fetch(
-        `api/links?filterByFormula=shortname='${data.shortname}'`
-      ).then((res) => {
-        return res.json();
-      });
-      // console.log(check);
-
-      if (check?.records?.length > 0) {
-        toast.error("The shortname is already taken", { id: loadingToast });
-        setFormError(true);
-        setIsSubmitting(false);
-      } else if (check?.records?.length == 0) {
-        const response = await fetch(
+      if (editedLinkData.shortname != linkData.shortname) {
+        checkShortname = await fetch(
+          `api/links?filterByFormula=shortname='${data.shortname}'`
+        ).then((res) => {
+          return res.json();
+        });
+      } else {
+        submitForm = await fetch(
           `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`,
           {
             method: "PATCH",
@@ -70,9 +72,42 @@ export function EditLinkModal({ link }: any) {
             body: JSON.stringify(airtableBody),
           }
         );
+        if (submitForm?.ok) {
+          if (submitForm?.status == 200) {
+            setIsOpen(false);
+            setIsSubmitting(false);
+            mutate(`api/link?linkId=${link.id}`);
+            toast.success("Link edited!", { id: loadingToast });
+            //   router.reload();
+          }
+        } else {
+          setIsOpen(false);
+          setIsSubmitting(false);
+          console.error("Edit Failed");
+          toast.error("Cannot edit Your link", { id: loadingToast });
+        }
+      }
 
-        if (response.ok) {
-          if (response.status == 200) {
+      // console.log(check);
+
+      if (checkShortname?.records?.length > 0) {
+        toast.error("The shortname is already taken", { id: loadingToast });
+        setFormError(true);
+        setIsSubmitting(false);
+      } else if (checkShortname?.records?.length == 0) {
+        submitForm = await fetch(
+          `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(airtableBody),
+          }
+        );
+        if (submitForm?.ok) {
+          if (submitForm?.status == 200) {
             setIsOpen(false);
             setIsSubmitting(false);
             mutate(`api/link?linkId=${link.id}`);
@@ -95,17 +130,17 @@ export function EditLinkModal({ link }: any) {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await submitForm(linkData);
+    await submitForm(editedLinkData);
   };
 
   const handleInputChange = (event: any) => {
     // console.log(event);
     const { name, value } = event.target;
-    setLinkData((prevSettings) => ({
+    setEditedLinkData((prevSettings) => ({
       ...prevSettings,
       [name]: value,
     }));
-    if (linkData.shortname && linkData.url) {
+    if (editedLinkData.shortname && editedLinkData.url) {
       setFormFilled(true);
     } else {
       setFormFilled(false);
@@ -190,7 +225,7 @@ export function EditLinkModal({ link }: any) {
                               type="text"
                               name="url"
                               className="mt-1 block w-full rounded-md text-slate-600 border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50"
-                              value={linkData.url}
+                              value={editedLinkData.url}
                               onChange={handleInputChange}
                             />
                           </div>
@@ -211,7 +246,7 @@ export function EditLinkModal({ link }: any) {
                                     : "border-gray-300 ",
                                   "block w-full rounded-r-md text-slate-600 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50"
                                 )}
-                                value={linkData.shortname}
+                                value={editedLinkData.shortname}
                                 onChange={handleInputChange}
                               />
                             </div>
@@ -247,7 +282,7 @@ export function EditLinkModal({ link }: any) {
           </div>
         </Dialog>
       </Transition>
-      <Toaster />
+      {/* <Toaster /> */}
     </>
   );
 }
