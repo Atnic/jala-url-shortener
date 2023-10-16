@@ -12,7 +12,7 @@ export default async function handler(
   // let links = (await redis.get("links")) || [];
 
   const link = await fetch(
-    `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links?filterByFormula=${filterByFormula}&view=link-view`,
+    `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links?filterByFormula=${filterByFormula}&view=link-view&fields%5B%5D=shortname`,
     {
       method: "GET",
       headers: {

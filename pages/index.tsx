@@ -73,15 +73,6 @@ export default function Home() {
     }
   );
 
-  const checkInput = async () => {
-    console.log(value);
-    if (value.includes("https://")) {
-      setInputCorrection(true);
-    } else {
-      setInputCorrection(false);
-    }
-  };
-
   // console.log(user, links, session?.user);
 
   const CreateAccount = async () => {
@@ -123,7 +114,7 @@ export default function Home() {
     }
   }, [user]);
 
-  // console.log(user, links);
+  console.log(user, links);
 
   // console.log(session);
 
@@ -175,13 +166,51 @@ export default function Home() {
   };
 
   if (userDataLoading || linksDataLoading) {
-    <Page>
-      <PageContent>
-        <Container>
-          <LoadingLogo />
-        </Container>
-      </PageContent>
-    </Page>;
+    return (
+      <Page>
+        <PageContent>
+          <Container>
+            <div className="flex flex-col items-center justify-center  h-[100svh]">
+              <div className="text-5xl animate-spin">🍤</div>
+            </div>
+          </Container>
+        </PageContent>
+      </Page>
+    );
+  }
+
+  if (userDataError) {
+    return (
+      <Page>
+        <PageContent>
+          <Container>
+            <div className="flex flex-col items-center justify-center  h-[100svh]">
+              <div className="text-xl animate-spin">
+                Cannot get the user data. Please check your connection or try to
+                refresh the page
+              </div>
+            </div>
+          </Container>
+        </PageContent>
+      </Page>
+    );
+  }
+
+  if (linksDataError) {
+    return (
+      <Page>
+        <PageContent>
+          <Container>
+            <div className="flex flex-col items-center justify-center  h-[100svh]">
+              <div className="text-xl animate-spin">
+                Cannot get the links data. Please check your connection or try
+                to refresh the page
+              </div>
+            </div>
+          </Container>
+        </PageContent>
+      </Page>
+    );
   }
 
   // console.log(links, user);
@@ -268,7 +297,7 @@ export default function Home() {
                 <div className="flex flex-col gap-4 px-4">
                   {links?.records ? (
                     links?.records.map((link: any, i: number) => (
-                      <LinkItem key={link.id} linkId={link.id} link={link} />
+                      <LinkItem key={link.id} linkId={link.id} />
                     ))
                   ) : (
                     <></>
