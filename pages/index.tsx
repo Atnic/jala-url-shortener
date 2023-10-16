@@ -7,16 +7,15 @@ import { Container } from "@/components/layouts/Container";
 import { useEffect, useState } from "react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import useSWR, { useSWRConfig } from "swr";
-import { LoadingLogo } from "@/components/icons/JalaLogo";
+// import { LoadingLogo } from "@/components/icons/JalaLogo";
 import { LinkItem } from "@/components/homepage/LinkItem";
 import { fetcher } from "@/utils/fetcher";
 import clsx from "clsx";
 
 export default function Home() {
   const [value, setValue] = useState("");
-  const [error, setError] = useState(false);
+  // const [error, setError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [inputCorrection, setInputCorrection] = useState(false);
   // const [links, setLinks] = useState({});
 
   const { data: session, status } = useSession();
@@ -159,7 +158,7 @@ export default function Home() {
       toast.success("Link shorted!", { id: loadingToast });
       setIsSubmitting(false);
     } else if (shorten.status == 400) {
-      setError(true);
+      // setError(true);
       setIsSubmitting(false);
       toast.error("Cannot shorten Your link", { id: loadingToast });
     }
@@ -214,41 +213,41 @@ export default function Home() {
   }
 
   // console.log(links, user);
-  if (user) {
-    return (
-      <>
-        <Head>
-          <title>Jala.cc Url Shortener</title>
-          <meta
-            name="description"
-            content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
-          />
+  return (
+    <>
+      <Head>
+        <title>Jala.cc Url Shortener</title>
+        <meta
+          name="description"
+          content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+        />
 
-          <meta property="og:url" content="https://jala.cc" />
-          <meta property="og:type" content="website" />
-          <meta property="og:title" content="Jala.cc Url Shortener" />
-          <meta
-            property="og:description"
-            content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
-          />
-          <meta
-            property="og:image"
-            content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
-          />
+        <meta property="og:url" content="https://jala.cc" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Jala.cc Url Shortener" />
+        <meta
+          property="og:description"
+          content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+        />
+        <meta
+          property="og:image"
+          content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
+        />
 
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="twitter:domain" content="jala.cc" />
-          <meta property="twitter:url" content="https://jala.cc" />
-          <meta name="twitter:title" content="Jala.cc Url Shortener" />
-          <meta
-            name="twitter:description"
-            content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
-          />
-          <meta
-            name="twitter:image"
-            content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
-          />
-        </Head>
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content="jala.cc" />
+        <meta property="twitter:url" content="https://jala.cc" />
+        <meta name="twitter:title" content="Jala.cc Url Shortener" />
+        <meta
+          name="twitter:description"
+          content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+        />
+        <meta
+          name="twitter:image"
+          content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
+        />
+      </Head>
+      {user && (
         <Page>
           <PageContent>
             <Container>
@@ -316,7 +315,7 @@ export default function Home() {
             </Container>
           </PageContent>
         </Page>
-      </>
-    );
-  }
+      )}
+    </>
+  );
 }
