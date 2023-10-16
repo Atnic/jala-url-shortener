@@ -24,6 +24,7 @@ export default async function handler(
           shortname: shortUrl,
           url: url,
           owner: [owner],
+          visit_count: 0,
         },
       },
     ],
