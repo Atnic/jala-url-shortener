@@ -50,7 +50,7 @@ export async function middleware(req: NextRequest) {
       ],
     };
 
-    console.log(airtableBody);
+    // console.log(airtableBody);
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`,

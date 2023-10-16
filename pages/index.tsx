@@ -114,7 +114,7 @@ export default function Home() {
     }
   }, [user]);
 
-  console.log(user, links);
+  // console.log(user, links);
 
   // console.log(session);
 
