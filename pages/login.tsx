@@ -8,12 +8,6 @@ import { PageContent } from "@/components/layouts/PageContent";
 import { Container } from "@/components/layouts/Container";
 import { GoogleLogo } from "@/components/icons/JalaLogo";
 import { LoadingLogo } from "@/components/icons/JalaLogo";
-// import type {
-//   GetServerSidePropsContext,
-//   InferGetServerSidePropsType,
-// } from "next";
-// import { getCsrfToken } from "next-auth/react";
-// import { LoginNIKDisclosure } from "@/components/login/LoginNIKDisclosure";
 
 export default function Login({}) {
   const { data: session, status } = useSession();
@@ -35,10 +29,38 @@ export default function Login({}) {
     return (
       <>
         <Head>
-          <title>Login | Jala.cc Url Shortener</title>
-          <meta name="description" content="Jala.cc Url Shortener" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
+          <Head>
+            <title>Jala.cc Url Shortener</title>
+            <meta
+              name="description"
+              content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+            />
+
+            <meta property="og:url" content="https://jala.cc" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="Jala.cc Url Shortener" />
+            <meta
+              property="og:description"
+              content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+            />
+            <meta
+              property="og:image"
+              content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
+            />
+
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="twitter:domain" content="jala.cc" />
+            <meta property="twitter:url" content="https://jala.cc" />
+            <meta name="twitter:title" content="Jala.cc Url Shortener" />
+            <meta
+              name="twitter:description"
+              content="Create a custom short links and QR Codes. Share it anywhere, track the clicks. Only for Warga Jala."
+            />
+            <meta
+              name="twitter:image"
+              content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
+            />
+          </Head>
         </Head>
         <Page>
           <PageContent>

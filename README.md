@@ -19,3 +19,5 @@
 - [x] Empty link handler
 - [x] favicon
 - [x] Add click/visit counter
+- [ ] Add next seo
+- [ ] Add advanced analytics (eg. Umami)
