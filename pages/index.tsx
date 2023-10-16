@@ -16,6 +16,7 @@ export default function Home() {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [inputCorrection, setInputCorrection] = useState(false);
   // const [links, setLinks] = useState({});
 
   const { data: session, status } = useSession();
@@ -72,6 +73,15 @@ export default function Home() {
     }
   );
 
+  const checkInput = async () => {
+    console.log(value);
+    if (value.includes("https://")) {
+      setInputCorrection(true);
+    } else {
+      setInputCorrection(false);
+    }
+  };
+
   // console.log(user, links, session?.user);
 
   const CreateAccount = async () => {
@@ -123,14 +133,32 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsSubmitting(true);
+    let shorten;
 
     const loadingToast = toast.loading("Shorten Your link");
 
-    const shorten = await fetch("/api/shorten", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
-    });
+    if (value.includes("https://")) {
+      shorten = await fetch("/api/shorten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
+      });
+    } else {
+      shorten = await fetch("/api/shorten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: `https://${value}`,
+          owner: user?.records[0]?.id,
+        }),
+      });
+    }
+
+    // const shorten = await fetch("/api/shorten", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
+    // });
 
     if (shorten.status == 200) {
       setValue("");
@@ -144,7 +172,6 @@ export default function Home() {
       setIsSubmitting(false);
       toast.error("Cannot shorten Your link", { id: loadingToast });
     }
-    // console.log(shorten);
   };
 
   if (userDataLoading || linksDataLoading) {

@@ -247,7 +247,7 @@ export function EditLinkModal({ link }: any) {
           </div>
         </Dialog>
       </Transition>
-      <Toaster />
+      {/* <Toaster /> */}
     </>
   );
 }

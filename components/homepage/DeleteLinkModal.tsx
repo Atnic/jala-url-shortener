@@ -121,7 +121,7 @@ export function DeleteLinkModal({ link }: any) {
           </div>
         </Dialog>
       </Transition>
-      <Toaster />
+      {/* <Toaster /> */}
     </>
   );
 }

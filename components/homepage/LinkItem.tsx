@@ -107,7 +107,7 @@ export function LinkItem({ linkId }: any) {
         </div>
       </div>
       <EditLinkModal link={link} />
-      <Toaster />
+      {/* <Toaster /> */}
     </div>
   );
 }
