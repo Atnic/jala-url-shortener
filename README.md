@@ -19,7 +19,7 @@
 - [x] Empty link handler
 - [x] favicon
 - [x] Add click/visit counter
-- [ ] Add seo
+- [x] Add seo
 - [ ] Add advanced analytics (eg. Umami)
 - [x] Auto signup for non user
-- [ ] Typing checking
+- [x] Typing checking
