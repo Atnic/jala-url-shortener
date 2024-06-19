@@ -7,6 +7,7 @@ import { Container } from "@/components/layouts/Container";
 import { useEffect, useState } from "react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import useSWR, { useSWRConfig } from "swr";
+// import Script from "next/script";
 // import { LoadingLogo } from "@/components/icons/JalaLogo";
 import { LinkItem } from "@/components/homepage/LinkItem";
 import { fetcher } from "@/utils/fetcher";
@@ -246,6 +247,11 @@ export default function Home() {
           name="twitter:image"
           content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
         />
+        {/* <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="f479d332-9df1-4719-abc1-ded2eddc020e"
+        /> */}
       </Head>
       {user && (
         <Page>
