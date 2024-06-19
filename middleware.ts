@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Umami from "./utils/useUmami";
+// import Umami from "./utils/useUmami";
 // import { redis, getUrl } from "./lib/redis";
 
 export async function middleware(req: NextRequest) {
@@ -12,7 +12,7 @@ export async function middleware(req: NextRequest) {
 
   link404.pathname = `/404`;
 
-  const trackEvent = Umami("/");
+  // const trackEvent = Umami("/");
 
   // const url = await getUrl(path);
 
@@ -70,7 +70,7 @@ export async function middleware(req: NextRequest) {
     // console.log(response);
     if (response.ok) {
       // console.log(response.status);
-      trackEvent(`${url?.records[0]?.fields?.shortname}`, "visit");
+      // trackEvent(`${url?.records[0]?.fields?.shortname}`, "visit");
       return NextResponse.redirect(url?.records[0]?.fields?.url);
     }
   } else {
