@@ -28,25 +28,12 @@ export async function middleware(req: NextRequest) {
     return res.json();
   });
 
-  // if(url){
-  //   console.log
-  // }
-  // if (url?.records[0]?.fields?.url) {
-  //   console.log("count", url?.records[0]?.fields?.visit_count + 1);
-  // }
-
-  // console.log(url);
-
-  // console.log(url?.records[0]?.fields?.url);
-
   if (url?.records[0]?.fields?.url) {
     const airtableBody = {
       records: [
         {
           id: url.records[0].id,
           fields: {
-            // shortname: url.records[0].fields.shortname,
-            // url: url.records[0].fields.url,
             visit_count: url.records[0].fields.visit_count + 1,
           },
         },
@@ -99,6 +86,17 @@ export async function middleware(req: NextRequest) {
     // console.log(response);
 
     if (response.ok) {
+      const redirectUrl = new URL("/redirect", req.url);
+      redirectUrl.searchParams.set(
+        "shortUrl",
+        url?.records[0]?.fields?.shortname
+      );
+      redirectUrl.searchParams.set(
+        "originalUrl",
+        encodeURIComponent(url?.records[0]?.fields?.url)
+      );
+      return NextResponse.redirect(redirectUrl);
+
       return new NextResponse(redirectHtml, {
         headers: { "content-type": "text/html" },
       });
@@ -109,7 +107,6 @@ export async function middleware(req: NextRequest) {
   } else {
     return NextResponse.redirect(link404);
   }
-  // console.log(path);
 }
 
 export const config = {
