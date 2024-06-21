@@ -58,8 +58,8 @@ export async function middleware(req: NextRequest) {
   <script>
     if (window.umami) {
       window.umami.trackEvent('shortlink visit', {url: '${url?.records[0]?.fields?.shortname}'});
-      window.location.href = '${url?.records[0]?.fields?.url}';
     }
+      window.location.href = '${url?.records[0]?.fields?.url}';
   </script>`;
 
     // console.log(airtableBody);
