@@ -62,6 +62,26 @@ export async function middleware(req: NextRequest) {
       window.location.href = '${url?.records[0]?.fields?.url}';
   </script>`;
 
+    const redirectHtml = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="refresh" content="0;url=${url?.records[0]?.fields?.url}">
+        <script async defer data-website-id="f479d332-9df1-4719-abc1-ded2eddc020e" src="https://cloud.umami.is/script.js"></script>
+        <script>
+          window.onload = function() {
+            if (window.umami) {
+              window.umami.trackEvent('shortlink visit', {url: '${url?.records[0]?.fields?.shortname}'});
+            }
+          };
+        </script>
+      </head>
+      <body>
+      </body>
+      </html>
+    `;
+
     // console.log(airtableBody);
 
     const response = await fetch(
@@ -79,7 +99,7 @@ export async function middleware(req: NextRequest) {
     // console.log(response);
 
     if (response.ok) {
-      return new NextResponse(trackingScript, {
+      return new NextResponse(redirectHtml, {
         headers: { "content-type": "text/html" },
       });
       // console.log(response.status);
