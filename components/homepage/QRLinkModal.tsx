@@ -24,7 +24,7 @@ export function QRLinkModal({ link }: any) {
     const svgElement = svgRef.current;
     // const svgElement = document.getElementById(svgId);
 
-    console.log(svgElement);
+    // console.log(svgElement);
 
     if (svgElement) {
       html2canvas(svgElement, { useCORS: true }).then((canvas) => {
@@ -98,7 +98,7 @@ export function QRLinkModal({ link }: any) {
                     >
                       <div>
                         <QRCodeSVG
-                          value={`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}`}
+                          value={`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}?type=qr`}
                           id={`qr-${shortlink}`}
                           size={128}
                           bgColor={"#ffffff"}
