@@ -77,11 +77,11 @@ export async function middleware(req: NextRequest) {
     );
 
     // console.log(response);
+    return new NextResponse(trackingScript, {
+      headers: { "content-type": "text/html" },
+    });
     if (response.ok) {
       // console.log(response.status);
-      return new NextResponse(trackingScript, {
-        headers: { "content-type": "text/html" },
-      });
       // trackEvent(`${url?.records[0]?.fields?.shortname}`, "visit");
       // return NextResponse.redirect(url?.records[0]?.fields?.url);
     }
