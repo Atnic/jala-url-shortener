@@ -57,9 +57,9 @@ export async function middleware(req: NextRequest) {
   <script async defer data-website-id="f479d332-9df1-4719-abc1-ded2eddc020e" src="https://cloud.umami.is/script.js"></script>
   <script>
     if (window.umami) {
-      window.umami.trackEvent('${url?.records[0]?.fields?.shortname}', 'visit');
+      window.umami.trackEvent('shortlink visit', {url: '${url?.records[0]?.fields?.shortname}'});
+      window.location.href = '${url?.records[0]?.fields?.url}';
     }
-    window.location.href = '${url?.records[0]?.fields?.url}';
   </script>`;
 
     // console.log(airtableBody);
@@ -77,10 +77,11 @@ export async function middleware(req: NextRequest) {
     );
 
     // console.log(response);
-    return new NextResponse(trackingScript, {
-      headers: { "content-type": "text/html" },
-    });
+
     if (response.ok) {
+      return new NextResponse(trackingScript, {
+        headers: { "content-type": "text/html" },
+      });
       // console.log(response.status);
       // trackEvent(`${url?.records[0]?.fields?.shortname}`, "visit");
       // return NextResponse.redirect(url?.records[0]?.fields?.url);
