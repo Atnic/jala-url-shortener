@@ -86,16 +86,24 @@ export async function middleware(req: NextRequest) {
     // console.log(response);
 
     if (response.ok) {
-      const redirectUrl = new URL("/redirect", req.url);
-      redirectUrl.searchParams.set(
-        "shortUrl",
-        url?.records[0]?.fields?.shortname
+      // const redirectUrl = new URL(
+      //   "/redirect",
+      //   process.env.NEXT_PUBLIC_HOSTNAME
+      // );
+      // redirectUrl.searchParams.set(
+      //   "shortUrl",
+      //   url?.records[0]?.fields?.shortname
+      // );
+      // redirectUrl.searchParams.set(
+      //   "originalUrl",
+      //   encodeURIComponent(url?.records[0]?.fields?.url)
+      // );
+
+      // console.log("base", req.url);
+      // console.log(redirectUrl);
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_HOSTNAME}/redirect?shortUrl=${url?.records[0]?.fields?.shortname}&originalUrl=${url?.records[0]?.fields?.url}`
       );
-      redirectUrl.searchParams.set(
-        "originalUrl",
-        encodeURIComponent(url?.records[0]?.fields?.url)
-      );
-      return NextResponse.redirect(redirectUrl);
 
       return new NextResponse(redirectHtml, {
         headers: { "content-type": "text/html" },
@@ -112,5 +120,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/((?!api|_next/static|_next/image|auth|favicon.ico|robots.txt|images|$).*)",
+    "/redirect",
   ],
+  // matcher: "/:shortUrl",
 };

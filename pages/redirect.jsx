@@ -22,8 +22,6 @@ const Redirect = ({ originalUrl, shortUrl }) => {
 
 export async function getServerSideProps({ query }) {
   const { shortUrl } = query;
-
-  await dbConnect();
   // const url = await Url.findOne({ shortUrl });
 
   const url = await fetch(
@@ -38,7 +36,9 @@ export async function getServerSideProps({ query }) {
     return res.json();
   });
 
-  if (!url?.records[0]?.fields?.url) {
+  console.log(shortUrl, url);
+
+  if (!url) {
     return {
       notFound: true,
     };
