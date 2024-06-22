@@ -28,25 +28,12 @@ export async function middleware(req: NextRequest) {
     return res.json();
   });
 
-  // if(url){
-  //   console.log
-  // }
-  // if (url?.records[0]?.fields?.url) {
-  //   console.log("count", url?.records[0]?.fields?.visit_count + 1);
-  // }
-
-  // console.log(url);
-
-  // console.log(url?.records[0]?.fields?.url);
-
   if (url?.records[0]?.fields?.url) {
     const airtableBody = {
       records: [
         {
           id: url.records[0].id,
           fields: {
-            // shortname: url.records[0].fields.shortname,
-            // url: url.records[0].fields.url,
             visit_count: url.records[0].fields.visit_count + 1,
           },
         },
@@ -57,10 +44,30 @@ export async function middleware(req: NextRequest) {
   <script async defer data-website-id="f479d332-9df1-4719-abc1-ded2eddc020e" src="https://cloud.umami.is/script.js"></script>
   <script>
     if (window.umami) {
-      window.umami.trackEvent('${url?.records[0]?.fields?.shortname}', 'visit');
+      window.umami.trackEvent('shortlink visit', {url: '${url?.records[0]?.fields?.shortname}'});
     }
-    window.location.href = '${url?.records[0]?.fields?.url}';
+      window.location.href = '${url?.records[0]?.fields?.url}';
   </script>`;
+
+    const redirectHtml = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="refresh" content="0;url=${url?.records[0]?.fields?.url}">
+        <script async defer data-website-id="f479d332-9df1-4719-abc1-ded2eddc020e" src="https://cloud.umami.is/script.js"></script>
+        <script>
+          window.onload = function() {
+            if (window.umami) {
+              window.umami.trackEvent('shortlink visit', {url: '${url?.records[0]?.fields?.shortname}'});
+            }
+          };
+        </script>
+      </head>
+      <body>
+      </body>
+      </html>
+    `;
 
     // console.log(airtableBody);
 
@@ -77,10 +84,27 @@ export async function middleware(req: NextRequest) {
     );
 
     // console.log(response);
-    return new NextResponse(trackingScript, {
-      headers: { "content-type": "text/html" },
-    });
+
     if (response.ok) {
+      // const redirectUrl = new URL(
+      //   "/redirect",
+      //   process.env.NEXT_PUBLIC_HOSTNAME
+      // );
+      // redirectUrl.searchParams.set(
+      //   "shortUrl",
+      //   url?.records[0]?.fields?.shortname
+      // );
+      // redirectUrl.searchParams.set(
+      //   "originalUrl",
+      //   encodeURIComponent(url?.records[0]?.fields?.url)
+      // );
+      // return NextResponse.redirect(
+      //   `${process.env.NEXT_PUBLIC_HOSTNAME}/redirect?shortUrl=${url?.records[0]?.fields?.shortname}&originalUrl=${url?.records[0]?.fields?.url}`
+      // );
+
+      return new NextResponse(redirectHtml, {
+        headers: { "content-type": "text/html" },
+      });
       // console.log(response.status);
       // trackEvent(`${url?.records[0]?.fields?.shortname}`, "visit");
       // return NextResponse.redirect(url?.records[0]?.fields?.url);
@@ -88,11 +112,11 @@ export async function middleware(req: NextRequest) {
   } else {
     return NextResponse.redirect(link404);
   }
-  // console.log(path);
 }
 
 export const config = {
   matcher: [
     "/((?!api|_next/static|_next/image|auth|favicon.ico|robots.txt|images|$).*)",
   ],
+  // matcher: "/:shortUrl",
 };
