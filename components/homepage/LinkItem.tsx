@@ -68,8 +68,8 @@ export function LinkItem({ linkId }: any) {
     return (
       <div className="flex flex-row justify-between px-4 py-3 rounded-md shadow-md w-full">
         <div className="flex flex-col gap-1 w-3/4">
-          <div className="flex flex-row gap-2 items-center">
-            <div className="text-jala-insight font-semibold">
+          <div className="flex flex-row gap-2 items-center w-full ">
+            <div className="text-jala-insight font-semibold text-sm text-nowrap">
               <a
                 href={`/${shortlink}`}
                 target="_blank"
