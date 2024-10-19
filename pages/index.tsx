@@ -7,6 +7,7 @@ import { Container } from "@/components/layouts/Container";
 import { useEffect, useState } from "react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import useSWR, { useSWRConfig } from "swr";
+import { supabase } from "@/lib/supabaseClient";
 // import Script from "next/script";
 // import { LoadingLogo } from "@/components/icons/JalaLogo";
 import { LinkItem } from "@/components/homepage/LinkItem";
@@ -112,7 +113,7 @@ export default function Home() {
       // console.log("non user");
       CreateAccount();
     }
-  }, [user]);
+  }, [user, session]);
 
   // console.log(user, links);
 
@@ -213,7 +214,7 @@ export default function Home() {
     );
   }
 
-  // console.log(links, user);
+  console.log(links, user);
   return (
     <>
       <Head>
@@ -247,11 +248,6 @@ export default function Home() {
           name="twitter:image"
           content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
         />
-        {/* <script
-          defer
-          src="https://cloud.umami.is/script.js"
-          data-website-id="f479d332-9df1-4719-abc1-ded2eddc020e"
-        /> */}
       </Head>
       {user && (
         <Page>
@@ -325,3 +321,28 @@ export default function Home() {
     </>
   );
 }
+
+// export const getStaticPaths = async () => {
+//   const { data: pages, error } = await supabase
+//     .from("pages")
+//     .select("*")
+//     .order("link_url", { ascending: true });
+
+//   const paths = pages?.map((page) => ({
+//     params: {
+//       page: page,
+//     },
+//   }));
+
+//   return {
+//     paths,
+//     fallback: "blocking",
+//   };
+// };
+
+// export const getStaticProps = async ({params}) =>{
+//   console.log(params);
+//   return{
+//     param
+//   }
+// }
