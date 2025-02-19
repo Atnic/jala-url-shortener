@@ -9,11 +9,14 @@ export interface PageTypes {
   profile_image: string;
 }
 
-export interface LinkTypes {
+export interface LinkType {
   id: number;
   url: string;
   owner: string;
   created_at: string;
-  updated_att: string;
+  updated_at: string;
   title: string;
+  shortname: string;
+  email: string;
+  visit_count: number;
 }

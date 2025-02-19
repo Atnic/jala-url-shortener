@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { PageTypes, LinkTypes } from "@/utils/types";
 import { supabase } from "@/lib/supabaseClient";
@@ -16,8 +17,6 @@ export default function Pages() {
   const [page, setPage] = useState<PageTypes>();
   const [links, setLinks] = useState<LinkTypes[]>([]);
   const router = useRouter();
-
-  const link_url = "s";
 
   async function fetchPage(slug: string | string[] | undefined) {
     const { data, error, status, statusText } = await supabase
@@ -91,7 +90,7 @@ export default function Pages() {
       <Page>
         <PageContent>
           <Container>
-            <div className="flex flex-col gap-5 text-slate-700 relative py-12 items-center h-screen text-center item">
+            <div className="flex flex-col gap-5 text-slate-700 relative py-12 items-center h-screen text-center">
               <img
                 src={
                   page?.profile_image
@@ -101,8 +100,8 @@ export default function Pages() {
                 alt={page?.profile_title}
                 className="rounded-full w-24 h-24"
               />
-              <div className="flex flex-col gap-2 items-center">
-                <div className="font-semibold text-lg">
+              <div className="flex flex-col gap-2 items-center text-[#233f9e]">
+                <div className="font-semibold text-xl">
                   {page?.profile_title}
                 </div>
                 <div className="">{page?.profile_bio}</div>
@@ -134,28 +133,28 @@ export default function Pages() {
                             className="w-32 bg-white p-3 z-10 rounded-xl shadow-sm border border-slate-100"
                           >
                             <MenuItem>
-                              <a
+                              <Link
                                 className="block data-[focus]:bg-slate-200 p-2 rounded-xl"
                                 href="/settings"
                               >
                                 Copy link
-                              </a>
+                              </Link>
                             </MenuItem>
                             <MenuItem>
-                              <a
+                              <Link
                                 className="block data-[focus]:bg-slate-200 p-2 rounded-xl"
                                 href="/support"
                               >
                                 Support
-                              </a>
+                              </Link>
                             </MenuItem>
                             <MenuItem>
-                              <a
+                              <Link
                                 className="block data-[focus]:bg-slate-200 p-2 rounded-xl"
                                 href="/license"
                               >
                                 License
-                              </a>
+                              </Link>
                             </MenuItem>
                           </MenuItems>
                         </Menu>

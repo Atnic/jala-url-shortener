@@ -11,11 +11,13 @@ import { supabase } from "@/lib/supabaseClient";
 // import Script from "next/script";
 // import { LoadingLogo } from "@/components/icons/JalaLogo";
 import { LinkItem } from "@/components/homepage/LinkItem";
+import { LinkType } from "@/utils/types";
 import { fetcher } from "@/utils/fetcher";
 import clsx from "clsx";
 
 export default function Home() {
   const [value, setValue] = useState("");
+  const [links, setLinks] = useState<[LinkType]>();
   // const [error, setError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // const [links, setLinks] = useState({});
@@ -57,22 +59,40 @@ export default function Home() {
     }
   );
 
-  const {
-    data: links,
-    error: linksDataError,
-    isLoading: linksDataLoading,
-    // mutate,
-  } = useSWR(
-    user?.records[0]
-      ? `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
-      : null,
-    (url) => fetcher(url),
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+  // const {
+  //   data: links,
+  //   error: linksDataError,
+  //   isLoading: linksDataLoading,
+  //   // mutate,
+  // } = useSWR(
+  //   user?.records[0]
+  //     ? `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+  //     : null,
+  //   (url) => fetcher(url),
+  //   {
+  //     revalidateIfStale: false,
+  //     revalidateOnFocus: false,
+  //     revalidateOnReconnect: false,
+  //   }
+  // );
+
+  const fetchUserLinks = async () => {
+    const res = await fetch(
+      session?.user ? `api/links?user=${session?.user?.email}` : ""
+    );
+    const links = await res.json();
+    console.log(links);
+    // console.log(question);
+    if (links) {
+      setLinks(links);
     }
-  );
+  };
+
+  // console.log(session?.user, links);
+
+  useEffect(() => {
+    fetchUserLinks();
+  }, [session?.user]);
 
   // console.log(user, links, session?.user);
 
@@ -108,12 +128,12 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    if (session?.user?.email && !user?.records[0]) {
-      // console.log("non user");
-      CreateAccount();
-    }
-  }, [user, session]);
+  // useEffect(() => {
+  //   if (session?.user?.email && !user?.records[0]) {
+  //     // console.log("non user");
+  //     CreateAccount();
+  //   }
+  // }, [user, session]);
 
   // console.log(user, links);
 
@@ -166,7 +186,7 @@ export default function Home() {
     }
   };
 
-  if (userDataLoading || linksDataLoading) {
+  if (userDataLoading || !links) {
     return (
       <Page>
         <PageContent>
@@ -197,24 +217,24 @@ export default function Home() {
     );
   }
 
-  if (linksDataError) {
-    return (
-      <Page>
-        <PageContent>
-          <Container>
-            <div className="flex flex-col items-center justify-center  h-[100svh]">
-              <div className="text-xl animate-spin">
-                Cannot get the links data. Please check your connection or try
-                to refresh the page
-              </div>
-            </div>
-          </Container>
-        </PageContent>
-      </Page>
-    );
-  }
+  // if (linksDataError) {
+  //   return (
+  //     <Page>
+  //       <PageContent>
+  //         <Container>
+  //           <div className="flex flex-col items-center justify-center  h-[100svh]">
+  //             <div className="text-xl animate-spin">
+  //               Cannot get the links data. Please check your connection or try
+  //               to refresh the page
+  //             </div>
+  //           </div>
+  //         </Container>
+  //       </PageContent>
+  //     </Page>
+  //   );
+  // }
 
-  console.log(links, user);
+  // console.log(links, user);
   return (
     <>
       <Head>
@@ -296,7 +316,7 @@ export default function Home() {
                   </form>
                 </div>
                 <div className="flex flex-col gap-4 px-4">
-                  {links?.records ? (
+                  {/* {links?.records ? (
                     links?.records.map((link: any, i: number) => (
                       <LinkItem key={link.id} linkId={link.id} />
                     ))
@@ -304,6 +324,21 @@ export default function Home() {
                     <></>
                   )}
                   {links?.records == 0 ? (
+                    <div className="px-2 text-slate-600 text-sm text-center">
+                      No shortlink. Create your first shortlink by pasting your
+                      url on the form above.
+                    </div>
+                  ) : (
+                    <></>
+                  )} */}
+                  {links?.length > 0 ? (
+                    links.map((link: any, i: number) => (
+                      <LinkItem key={link.id} linkId={link.id} />
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                  {links?.length <= 0 ? (
                     <div className="px-2 text-slate-600 text-sm text-center">
                       No shortlink. Create your first shortlink by pasting your
                       url on the form above.

@@ -1,7 +1,7 @@
 import React from "react";
 import useSWR from "swr";
 import { EditLinkModal } from "./EditLinkModal";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { fetcher } from "@/utils/fetcher";
 import { QRLinkModal } from "./QRLinkModal";
 import {
@@ -24,9 +24,11 @@ export function LinkItem({ linkId }: any) {
       revalidateOnReconnect: false,
     }
   );
-  const shortlink = link?.fields?.shortname;
-  const url = link?.fields?.url;
-  const visit_count = link?.fields?.visit_count;
+  const shortlink = link?.shortname;
+  const url = link?.url;
+  const visit_count = link?.visit_count;
+
+  console.log(link);
 
   const copyToClipboard = async (e: any) => {
     e.preventDefault();

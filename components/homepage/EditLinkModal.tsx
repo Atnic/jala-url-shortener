@@ -16,17 +16,17 @@ export function EditLinkModal({ link }: any) {
   const [formFilled, setFormFilled] = useState(false);
   const [linkData, setLinkData] = useState({
     id: link.id,
-    shortname: link?.fields?.shortname,
-    url: link?.fields?.url,
+    shortname: link?.shortname,
+    url: link?.url,
   });
   const [editedLinkData, setEditedLinkData] = useState({
     id: link.id,
-    shortname: link?.fields?.shortname,
-    url: link?.fields?.url,
+    shortname: link?.shortname,
+    url: link?.url,
   });
   const { mutate } = useSWRConfig();
 
-  const shortlink = link?.fields?.shortname;
+  const shortlink = link?.shortname;
 
   function closeModal() {
     setIsOpen(false);
