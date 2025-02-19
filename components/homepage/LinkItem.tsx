@@ -28,7 +28,7 @@ export function LinkItem({ linkId }: any) {
   const url = link?.url;
   const visit_count = link?.visit_count;
 
-  console.log(link);
+  // console.log(link);
 
   const copyToClipboard = async (e: any) => {
     e.preventDefault();
@@ -80,20 +80,6 @@ export function LinkItem({ linkId }: any) {
                 {`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}`}
               </a>
             </div>
-            <div className="md:flex flex-row gap-2 items-center hidden">
-              <button
-                className="rounded-full p-2 bg-slate-100 hover:bg-sky-100"
-                onClick={copyToClipboard}
-              >
-                <DocumentDuplicateIcon className="w-4 h-4 text-jala-insight" />
-              </button>
-              <QRLinkModal link={link} />
-              <div className="flex w-fit gap-1 px-2 py-1 bg-slate-100 text-xs rounded">
-                <ChartBarIcon className="w-4 h-4 text-slate-700" />
-                {visit_count}
-                <span>click{visit_count > 1 ? `s` : ""}</span>
-              </div>
-            </div>
 
             {/* <DeleteLinkModal link={link} /> */}
           </div>
@@ -103,7 +89,7 @@ export function LinkItem({ linkId }: any) {
               {url}
             </a>
           </div>
-          <div className="flex flex-row gap-2 py-1 md:hidden items-center">
+          <div className="flex flex-row gap-2 py-1 items-center">
             <button
               className="rounded-full p-2 bg-slate-100 hover:bg-sky-100"
               onClick={copyToClipboard}

@@ -81,7 +81,7 @@ export default function Home() {
       session?.user ? `api/links?user=${session?.user?.email}` : ""
     );
     const links = await res.json();
-    console.log(links);
+    // console.log(links);
     // console.log(question);
     if (links) {
       setLinks(links);
@@ -96,37 +96,37 @@ export default function Home() {
 
   // console.log(user, links, session?.user);
 
-  const CreateAccount = async () => {
-    try {
-      const airtableBody = {
-        records: [
-          {
-            fields: {
-              name: session?.user?.name,
-              email: session?.user?.email,
-            },
-          },
-        ],
-      };
-      const response = await fetch(user?.records[0] ? "" : `/api/register`, {
-        method: "POST",
-        body: JSON.stringify(airtableBody),
-      });
-      if (response.ok) {
-        toast.success("Account created!");
-        mutate(`api/user?filterByFormula=email='${session?.user?.email}'`);
-        mutate(
-          `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
-        );
-        console.log("new account created!");
-      } else {
-        console.error("Registration Failed");
-      }
-    } catch (error) {
-      console.error("An error occurred", error);
-    } finally {
-    }
-  };
+  // const CreateAccount = async () => {
+  //   try {
+  //     const airtableBody = {
+  //       records: [
+  //         {
+  //           fields: {
+  //             name: session?.user?.name,
+  //             email: session?.user?.email,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //     const response = await fetch(user?.records[0] ? "" : `/api/register`, {
+  //       method: "POST",
+  //       body: JSON.stringify(airtableBody),
+  //     });
+  //     if (response.ok) {
+  //       toast.success("Account created!");
+  //       mutate(`api/user?filterByFormula=email='${session?.user?.email}'`);
+  //       mutate(
+  //         `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+  //       );
+  //       console.log("new account created!");
+  //     } else {
+  //       console.error("Registration Failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred", error);
+  //   } finally {
+  //   }
+  // };
 
   // useEffect(() => {
   //   if (session?.user?.email && !user?.records[0]) {
@@ -142,6 +142,8 @@ export default function Home() {
   // const links = user?.records[0]?.fields?.links;
   // const owner = user?.records[0]?.id;
 
+  // console.log(user);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -153,7 +155,11 @@ export default function Home() {
       shorten = await fetch("/api/shorten", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
+        body: JSON.stringify({
+          url: value,
+          owner: session?.user?.name,
+          email: session?.user?.email,
+        }),
       });
     } else {
       shorten = await fetch("/api/shorten", {
@@ -161,7 +167,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url: `https://${value}`,
-          owner: user?.records[0]?.id,
+          owner: session?.user?.name,
+          email: session?.user?.email,
         }),
       });
     }
@@ -172,16 +179,21 @@ export default function Home() {
     //   body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
     // });
 
+    // console.log(shorten);
+
     if (shorten.status == 200) {
       setValue("");
-      mutate(
-        `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
-      );
+      // mutate(
+      //   `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+      // );
+      mutate(`api/links?user=${session?.user?.email}`);
       toast.success("Link shorted!", { id: loadingToast });
+      fetchUserLinks();
       setIsSubmitting(false);
     } else if (shorten.status == 400) {
       // setError(true);
       setIsSubmitting(false);
+      fetchUserLinks();
       toast.error("Cannot shorten Your link", { id: loadingToast });
     }
   };

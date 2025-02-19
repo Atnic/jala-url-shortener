@@ -33,9 +33,10 @@ export default async function handler(
     const { data, error } = await supabase
       .from("url_shortener")
       .select("id")
-      .eq("email", user);
+      .eq("email", user)
+      .order("created_at", { ascending: false });
 
-    console.log(user, data);
+    // console.log(user, data);
 
     if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json(data);

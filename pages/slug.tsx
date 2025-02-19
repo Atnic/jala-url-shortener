@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { PageTypes, LinkTypes } from "@/utils/types";
+import { PageTypes, LinkType } from "@/utils/types";
 import { supabase } from "@/lib/supabaseClient";
 import { PageContent } from "@/components/layouts/PageContent";
 import { Page } from "@/components/layouts/Page";
@@ -15,7 +15,7 @@ import useSWR from "swr";
 
 export default function Pages() {
   const [page, setPage] = useState<PageTypes>();
-  const [links, setLinks] = useState<LinkTypes[]>([]);
+  const [links, setLinks] = useState<LinkType[]>([]);
   const router = useRouter();
 
   async function fetchPage(slug: string | string[] | undefined) {
@@ -49,7 +49,7 @@ export default function Pages() {
     }
   }, [page?.id]);
 
-  console.log(router.query.slug, page, links);
+  // console.log(router.query.slug, page, links);
 
   //   const { data, error } = useSWR('my_table', fetcher)
 

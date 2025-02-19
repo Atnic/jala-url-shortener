@@ -163,8 +163,8 @@ export function EditLinkModal({ link }: any) {
           onClick={openModal}
           className="rounded-md p-2 text-sm font-medium text-slate-500 shadow-sm hover:bg-slate-100"
         >
-          <PencilSquareIcon className="w-3 h-3 hidden md:block" />
-          <EllipsisVerticalIcon className="w-4 h-4 block md:hidden" />
+          <PencilSquareIcon className="w-3 h-3" />
+          {/* <EllipsisVerticalIcon className="w-4 h-4 block md:hidden" /> */}
         </button>
       </div>
 

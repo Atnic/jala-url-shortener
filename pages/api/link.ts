@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
-// import { redis } from "@/lib/redis";
 
 const supabase = createClient(
   "https://texecfinpziblywwupcp.supabase.co",
