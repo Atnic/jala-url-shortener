@@ -5,7 +5,7 @@ import { Page } from "@/components/layouts/Page";
 import { PageContent } from "@/components/layouts/PageContent";
 import { Container } from "@/components/layouts/Container";
 import { supabase } from "@/lib/supabaseClient";
-import { PageTypes, LinkTypes } from "@/utils/types";
+import { PageTypes, LinkType } from "@/utils/types";
 import { useSession, signOut, signIn } from "next-auth/react";
 import clsx from "clsx";
 import { fetcher } from "@/utils/fetcher";
@@ -13,7 +13,7 @@ import useSWR, { useSWRConfig } from "swr";
 
 export default function Admin() {
   const [page, setPage] = useState<PageTypes>();
-  const [links, setLinks] = useState<LinkTypes[]>([]);
+  const [links, setLinks] = useState<LinkType[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
