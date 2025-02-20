@@ -69,9 +69,9 @@ export function LinkItem({ linkId }: any) {
   if (link) {
     return (
       <div className="flex flex-row justify-between px-4 py-3 rounded-md shadow-md w-full">
-        <div className="flex flex-col gap-1 w-3/4">
+        <div className="flex flex-col gap-1 w-5/6">
           <div className="flex flex-row gap-2 items-center w-full ">
-            <div className="text-jala-insight font-semibold text-sm text-nowrap">
+            <div className="text-jala-insight font-semibold text-sm text-nowrap truncate">
               <a
                 href={`/${shortlink}`}
                 target="_blank"
@@ -84,7 +84,7 @@ export function LinkItem({ linkId }: any) {
             {/* <DeleteLinkModal link={link} /> */}
           </div>
 
-          <div className="text-sm hover:underline text-slate-500 hover:text-slate-800 truncate  ">
+          <div className="text-xs hover:underline text-slate-400 hover:text-slate-800 truncate  ">
             <a href={url} target="_blank" className="">
               {url}
             </a>

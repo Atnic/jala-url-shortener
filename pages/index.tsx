@@ -32,10 +32,7 @@ export default function Home() {
 
   const { mutate } = useSWRConfig();
 
-  // console.log(session);
-
   const handleInputChange = (event: any) => {
-    // console.log(event);
     setValue(event.target.value);
     // const { name, value } = event.target;
     // setProfileData((prevSettings) => ({
@@ -44,20 +41,20 @@ export default function Home() {
     // }));
   };
 
-  const {
-    data: user,
-    error: userDataError,
-    isLoading: userDataLoading,
-    // mutate,
-  } = useSWR(
-    session ? `api/user?filterByFormula=email='${session?.user?.email}'` : null,
-    (url) => fetcher(url),
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  // const {
+  //   data: user,
+  //   error: userDataError,
+  //   isLoading: userDataLoading,
+  //   // mutate,
+  // } = useSWR(
+  //   session ? `api/user?filterByFormula=email='${session?.user?.email}'` : null,
+  //   (url) => fetcher(url),
+  //   {
+  //     revalidateIfStale: false,
+  //     revalidateOnFocus: false,
+  //     revalidateOnReconnect: false,
+  //   }
+  // );
 
   // const {
   //   data: links,
@@ -179,7 +176,7 @@ export default function Home() {
     //   body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
     // });
 
-    // console.log(shorten);
+    console.log(shorten);
 
     if (shorten.status == 200) {
       setValue("");
@@ -198,7 +195,7 @@ export default function Home() {
     }
   };
 
-  if (userDataLoading || !links) {
+  if (!session || !links) {
     return (
       <Page>
         <PageContent>
@@ -212,7 +209,7 @@ export default function Home() {
     );
   }
 
-  if (userDataError) {
+  if (!session) {
     return (
       <Page>
         <PageContent>
@@ -281,7 +278,7 @@ export default function Home() {
           content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
         />
       </Head>
-      {user && (
+      {session?.user && (
         <Page>
           <PageContent>
             <Container>
@@ -317,32 +314,19 @@ export default function Home() {
                     />
                     <button
                       className={clsx(
-                        isSubmitting ? "bg-slate-300 " : "bg-white",
-                        "absolute right-1.5 bottom-1.5 px-4 py-1 rounded-md border text-sm font-semibold border-slate-200 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed "
+                        isSubmitting
+                          ? "bg-slate-300 "
+                          : "bg-white hover:bg-jala-hover-bg",
+                        "absolute right-1.5 bottom-1.5 px-4 py-1 rounded-md border text-sm font-semibold border-slate-200 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50 "
                       )}
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !value}
                     >
                       Shorten! 🍤
                     </button>
                   </form>
                 </div>
                 <div className="flex flex-col gap-4 px-4">
-                  {/* {links?.records ? (
-                    links?.records.map((link: any, i: number) => (
-                      <LinkItem key={link.id} linkId={link.id} />
-                    ))
-                  ) : (
-                    <></>
-                  )}
-                  {links?.records == 0 ? (
-                    <div className="px-2 text-slate-600 text-sm text-center">
-                      No shortlink. Create your first shortlink by pasting your
-                      url on the form above.
-                    </div>
-                  ) : (
-                    <></>
-                  )} */}
                   {links?.length > 0 ? (
                     links.map((link: any, i: number) => (
                       <LinkItem key={link.id} linkId={link.id} />

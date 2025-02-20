@@ -12,21 +12,31 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // const { filterByFormula } = req.query;
-  // console.log(filterByFormula);
-  // console.log(linkId);
-  // let links = (await redis.get("links")) || [];
+  const { shortname, id, url } = req?.query;
 
-  // const link = await fetch(
-  //   `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links?filterByFormula=${filterByFormula}&view=link-view&fields%5B%5D=shortname`,
-  //   {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   }
-  // );
+  if (req.method === "PATCH" && id) {
+    const { data, error } = await supabase
+      .from("url_shortener")
+      .update({ shortname: shortname, url: url })
+      .eq("id", id)
+      .select()
+      .single();
+
+    // console.log(shortname, id, data);
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  }
+
+  if (req.method === "GET" && shortname) {
+    const { data, error } = await supabase
+      .from("url_shortener")
+      .select("id")
+      .eq("shortname", shortname);
+
+    // console.log(shortname, data);
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  }
 
   if (req.method === "GET") {
     const { user } = req?.query;
@@ -41,10 +51,4 @@ export default async function handler(
     if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json(data);
   }
-
-  // const response = await link.json();
-
-  // console.log(response);
-  // const response = await events.json();
-  // res.status(200).json(response);
 }

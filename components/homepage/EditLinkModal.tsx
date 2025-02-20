@@ -1,12 +1,9 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { useSWRConfig } from "swr";
-import { Fragment, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import { Fragment, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import clsx from "clsx";
-import {
-  PencilSquareIcon,
-  EllipsisVerticalIcon,
-} from "@heroicons/react/24/outline";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { DeleteLinkModal } from "./DeleteLinkModal";
 
 export function EditLinkModal({ link }: any) {
@@ -14,6 +11,7 @@ export function EditLinkModal({ link }: any) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState(false);
   const [formFilled, setFormFilled] = useState(false);
+  const [dataEdited, setDataEdited] = useState(false);
   const [linkData, setLinkData] = useState({
     id: link.id,
     shortname: link?.shortname,
@@ -42,44 +40,26 @@ export function EditLinkModal({ link }: any) {
     let checkShortname;
     let submitForm;
     try {
-      const airtableBody = {
-        records: [
-          {
-            id: data.id,
-            fields: {
-              shortname: data.shortname,
-              url: data.url,
-            },
-          },
-        ],
-      };
-
       if (editedLinkData.shortname != linkData.shortname) {
         checkShortname = await fetch(
-          `api/links?filterByFormula=shortname='${data.shortname}'`
+          `api/links?shortname=${data.shortname}`
         ).then((res) => {
           return res.json();
         });
       } else {
         submitForm = await fetch(
-          `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`,
+          `api/links?shortname=${data.shortname}&id=${data.id}&url=${data.url}`,
           {
             method: "PATCH",
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(airtableBody),
           }
-        );
-        if (submitForm?.ok) {
-          if (submitForm?.status == 200) {
-            setIsOpen(false);
-            setIsSubmitting(false);
-            mutate(`api/link?linkId=${link.id}`);
-            toast.success("Link edited!", { id: loadingToast });
-            //   router.reload();
-          }
+        ).then((res) => {
+          return res.json();
+        });
+        if (submitForm?.id) {
+          setIsOpen(false);
+          setIsSubmitting(false);
+          mutate(`api/link?linkId=${submitForm.id}`);
+          toast.success("Link edited!", { id: loadingToast });
         } else {
           setIsOpen(false);
           setIsSubmitting(false);
@@ -90,30 +70,24 @@ export function EditLinkModal({ link }: any) {
 
       // console.log(check);
 
-      if (checkShortname?.records?.length > 0) {
+      if (checkShortname?.length > 0) {
         toast.error("The shortname is already taken", { id: loadingToast });
         setFormError(true);
         setIsSubmitting(false);
-      } else if (checkShortname?.records?.length == 0) {
+      } else if (checkShortname?.length == 0) {
         submitForm = await fetch(
-          `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links`,
+          `api/links?shortname=${data.shortname}&id=${data.id}&url=${data.url}`,
           {
             method: "PATCH",
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(airtableBody),
           }
-        );
-        if (submitForm?.ok) {
-          if (submitForm?.status == 200) {
-            setIsOpen(false);
-            setIsSubmitting(false);
-            mutate(`api/link?linkId=${link.id}`);
-            toast.success("Link edited!", { id: loadingToast });
-            //   router.reload();
-          }
+        ).then((res) => {
+          return res.json();
+        });
+        if (submitForm?.id) {
+          setIsOpen(false);
+          setIsSubmitting(false);
+          mutate(`api/link?linkId=${submitForm.id}`);
+          toast.success("Link edited!", { id: loadingToast });
         } else {
           setIsOpen(false);
           setIsSubmitting(false);
@@ -147,13 +121,16 @@ export function EditLinkModal({ link }: any) {
     }
   };
 
-  // useEffect(() => {
-  //   // if (linkData.shortname && linkData.url) {
-  //   //   setFormFilled(true);
-  //   // } else {
-  //   //   setFormFilled(false);
-  //   // }
-  // }, [linkData]);
+  useEffect(() => {
+    if (
+      editedLinkData.shortname !== link.shortname ||
+      editedLinkData.url !== link.url
+    ) {
+      setDataEdited(true);
+    } else {
+      setDataEdited(false);
+    }
+  }, [editedLinkData, link]);
 
   return (
     <>
@@ -164,7 +141,6 @@ export function EditLinkModal({ link }: any) {
           className="rounded-md p-2 text-sm font-medium text-slate-500 shadow-sm hover:bg-slate-100"
         >
           <PencilSquareIcon className="w-3 h-3" />
-          {/* <EllipsisVerticalIcon className="w-4 h-4 block md:hidden" /> */}
         </button>
       </div>
 
@@ -263,7 +239,7 @@ export function EditLinkModal({ link }: any) {
                       <div className="flex flex-row gap-2">
                         <button
                           type="submit"
-                          disabled={isSubmitting || !formFilled}
+                          disabled={isSubmitting || !formFilled || !dataEdited}
                           className={clsx(
                             isSubmitting
                               ? "bg-slate-300 "
@@ -282,7 +258,6 @@ export function EditLinkModal({ link }: any) {
           </div>
         </Dialog>
       </Transition>
-      {/* <Toaster /> */}
     </>
   );
 }

@@ -31,7 +31,7 @@ export function DeleteLinkModal({ link }: any) {
     const loadingToast = toast.loading("Deleting your link");
     const linkDeleted = await fetch(`api/delete-link?linkId=${link.id}`);
 
-    console.log(linkDeleted);
+    // console.log(linkDeleted);
     if (linkDeleted.ok) {
       setIsSubmitting(false);
       setIsOpen(false);

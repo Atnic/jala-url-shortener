@@ -27,21 +27,4 @@ export default async function handler(
     if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json(data);
   }
-
-  // const link = await fetch(
-  //   `${process.env.NEXT_PUBLIC_AIRTABLE_URI}/links/${linkId}`,
-  //   {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${process.env.NEXT_PUBLIC_AIRTABLE_TOKEN}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   }
-  // );
-
-  // const response = await link.json();
-
-  // // // console.log(peserta.size);
-  // // const response = await events.json();
-  // res.status(200).json(response);
 }
