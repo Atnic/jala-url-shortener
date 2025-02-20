@@ -1,7 +1,7 @@
 import React from "react";
 import useSWR from "swr";
 import { EditLinkModal } from "./EditLinkModal";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { fetcher } from "@/utils/fetcher";
 import { QRLinkModal } from "./QRLinkModal";
 import {
@@ -24,9 +24,11 @@ export function LinkItem({ linkId }: any) {
       revalidateOnReconnect: false,
     }
   );
-  const shortlink = link?.fields?.shortname;
-  const url = link?.fields?.url;
-  const visit_count = link?.fields?.visit_count;
+  const shortlink = link?.shortname;
+  const url = link?.url;
+  const visit_count = link?.visit_count;
+
+  // console.log(link);
 
   const copyToClipboard = async (e: any) => {
     e.preventDefault();
@@ -67,9 +69,9 @@ export function LinkItem({ linkId }: any) {
   if (link) {
     return (
       <div className="flex flex-row justify-between px-4 py-3 rounded-md shadow-md w-full">
-        <div className="flex flex-col gap-1 w-3/4">
-          <div className="flex flex-row gap-2 items-center">
-            <div className="text-jala-insight font-semibold">
+        <div className="flex flex-col gap-1 w-5/6">
+          <div className="flex flex-row gap-2 items-center w-full ">
+            <div className="text-jala-insight font-semibold text-sm text-nowrap truncate">
               <a
                 href={`/${shortlink}`}
                 target="_blank"
@@ -78,30 +80,16 @@ export function LinkItem({ linkId }: any) {
                 {`${process.env.NEXT_PUBLIC_HOSTNAME}/${shortlink}`}
               </a>
             </div>
-            <div className="md:flex flex-row gap-2 items-center hidden">
-              <button
-                className="rounded-full p-2 bg-slate-100 hover:bg-sky-100"
-                onClick={copyToClipboard}
-              >
-                <DocumentDuplicateIcon className="w-4 h-4 text-jala-insight" />
-              </button>
-              <QRLinkModal link={link} />
-              <div className="flex w-fit gap-1 px-2 py-1 bg-slate-100 text-xs rounded">
-                <ChartBarIcon className="w-4 h-4 text-slate-700" />
-                {visit_count}
-                <span>click{visit_count > 1 ? `s` : ""}</span>
-              </div>
-            </div>
 
             {/* <DeleteLinkModal link={link} /> */}
           </div>
 
-          <div className="text-sm hover:underline text-slate-500 hover:text-slate-800 truncate  ">
+          <div className="text-xs hover:underline text-slate-400 hover:text-slate-800 truncate  ">
             <a href={url} target="_blank" className="">
               {url}
             </a>
           </div>
-          <div className="flex flex-row gap-2 py-1 md:hidden items-center">
+          <div className="flex flex-row gap-2 py-1 items-center">
             <button
               className="rounded-full p-2 bg-slate-100 hover:bg-sky-100"
               onClick={copyToClipboard}

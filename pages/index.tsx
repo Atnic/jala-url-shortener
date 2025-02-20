@@ -7,14 +7,17 @@ import { Container } from "@/components/layouts/Container";
 import { useEffect, useState } from "react";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import useSWR, { useSWRConfig } from "swr";
+import { supabase } from "@/lib/supabaseClient";
 // import Script from "next/script";
 // import { LoadingLogo } from "@/components/icons/JalaLogo";
 import { LinkItem } from "@/components/homepage/LinkItem";
+import { LinkType } from "@/utils/types";
 import { fetcher } from "@/utils/fetcher";
 import clsx from "clsx";
 
 export default function Home() {
   const [value, setValue] = useState("");
+  const [links, setLinks] = useState<[LinkType]>();
   // const [error, setError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // const [links, setLinks] = useState({});
@@ -29,10 +32,7 @@ export default function Home() {
 
   const { mutate } = useSWRConfig();
 
-  // console.log(session);
-
   const handleInputChange = (event: any) => {
-    // console.log(event);
     setValue(event.target.value);
     // const { name, value } = event.target;
     // setProfileData((prevSettings) => ({
@@ -41,78 +41,96 @@ export default function Home() {
     // }));
   };
 
-  const {
-    data: user,
-    error: userDataError,
-    isLoading: userDataLoading,
-    // mutate,
-  } = useSWR(
-    session ? `api/user?filterByFormula=email='${session?.user?.email}'` : null,
-    (url) => fetcher(url),
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  // const {
+  //   data: user,
+  //   error: userDataError,
+  //   isLoading: userDataLoading,
+  //   // mutate,
+  // } = useSWR(
+  //   session ? `api/user?filterByFormula=email='${session?.user?.email}'` : null,
+  //   (url) => fetcher(url),
+  //   {
+  //     revalidateIfStale: false,
+  //     revalidateOnFocus: false,
+  //     revalidateOnReconnect: false,
+  //   }
+  // );
 
-  const {
-    data: links,
-    error: linksDataError,
-    isLoading: linksDataLoading,
-    // mutate,
-  } = useSWR(
-    user?.records[0]
-      ? `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
-      : null,
-    (url) => fetcher(url),
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  // const {
+  //   data: links,
+  //   error: linksDataError,
+  //   isLoading: linksDataLoading,
+  //   // mutate,
+  // } = useSWR(
+  //   user?.records[0]
+  //     ? `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+  //     : null,
+  //   (url) => fetcher(url),
+  //   {
+  //     revalidateIfStale: false,
+  //     revalidateOnFocus: false,
+  //     revalidateOnReconnect: false,
+  //   }
+  // );
 
-  // console.log(user, links, session?.user);
-
-  const CreateAccount = async () => {
-    try {
-      const airtableBody = {
-        records: [
-          {
-            fields: {
-              name: session?.user?.name,
-              email: session?.user?.email,
-            },
-          },
-        ],
-      };
-      const response = await fetch(user?.records[0] ? "" : `/api/register`, {
-        method: "POST",
-        body: JSON.stringify(airtableBody),
-      });
-      if (response.ok) {
-        toast.success("Account created!");
-        mutate(`api/user?filterByFormula=email='${session?.user?.email}'`);
-        mutate(
-          `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
-        );
-        console.log("new account created!");
-      } else {
-        console.error("Registration Failed");
-      }
-    } catch (error) {
-      console.error("An error occurred", error);
-    } finally {
+  const fetchUserLinks = async () => {
+    const res = await fetch(
+      session?.user ? `api/links?user=${session?.user?.email}` : ""
+    );
+    const links = await res.json();
+    // console.log(links);
+    // console.log(question);
+    if (links) {
+      setLinks(links);
     }
   };
 
+  // console.log(session?.user, links);
+
   useEffect(() => {
-    if (session?.user?.email && !user?.records[0]) {
-      // console.log("non user");
-      CreateAccount();
-    }
-  }, [user]);
+    fetchUserLinks();
+  }, [session?.user]);
+
+  // console.log(user, links, session?.user);
+
+  // const CreateAccount = async () => {
+  //   try {
+  //     const airtableBody = {
+  //       records: [
+  //         {
+  //           fields: {
+  //             name: session?.user?.name,
+  //             email: session?.user?.email,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //     const response = await fetch(user?.records[0] ? "" : `/api/register`, {
+  //       method: "POST",
+  //       body: JSON.stringify(airtableBody),
+  //     });
+  //     if (response.ok) {
+  //       toast.success("Account created!");
+  //       mutate(`api/user?filterByFormula=email='${session?.user?.email}'`);
+  //       mutate(
+  //         `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+  //       );
+  //       console.log("new account created!");
+  //     } else {
+  //       console.error("Registration Failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred", error);
+  //   } finally {
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (session?.user?.email && !user?.records[0]) {
+  //     // console.log("non user");
+  //     CreateAccount();
+  //   }
+  // }, [user, session]);
 
   // console.log(user, links);
 
@@ -120,6 +138,8 @@ export default function Home() {
 
   // const links = user?.records[0]?.fields?.links;
   // const owner = user?.records[0]?.id;
+
+  // console.log(user);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -132,7 +152,11 @@ export default function Home() {
       shorten = await fetch("/api/shorten", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
+        body: JSON.stringify({
+          url: value,
+          owner: session?.user?.name,
+          email: session?.user?.email,
+        }),
       });
     } else {
       shorten = await fetch("/api/shorten", {
@@ -140,7 +164,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url: `https://${value}`,
-          owner: user?.records[0]?.id,
+          owner: session?.user?.name,
+          email: session?.user?.email,
         }),
       });
     }
@@ -151,21 +176,26 @@ export default function Home() {
     //   body: JSON.stringify({ url: value, owner: user?.records[0]?.id }),
     // });
 
+    console.log(shorten);
+
     if (shorten.status == 200) {
       setValue("");
-      mutate(
-        `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
-      );
+      // mutate(
+      //   `api/links?filterByFormula=SEARCH('${session?.user?.email}', ARRAYJOIN(email, ";"))`
+      // );
+      mutate(`api/links?user=${session?.user?.email}`);
       toast.success("Link shorted!", { id: loadingToast });
+      fetchUserLinks();
       setIsSubmitting(false);
     } else if (shorten.status == 400) {
       // setError(true);
       setIsSubmitting(false);
+      fetchUserLinks();
       toast.error("Cannot shorten Your link", { id: loadingToast });
     }
   };
 
-  if (userDataLoading || linksDataLoading) {
+  if (!session || !links) {
     return (
       <Page>
         <PageContent>
@@ -179,7 +209,7 @@ export default function Home() {
     );
   }
 
-  if (userDataError) {
+  if (!session) {
     return (
       <Page>
         <PageContent>
@@ -196,22 +226,22 @@ export default function Home() {
     );
   }
 
-  if (linksDataError) {
-    return (
-      <Page>
-        <PageContent>
-          <Container>
-            <div className="flex flex-col items-center justify-center  h-[100svh]">
-              <div className="text-xl animate-spin">
-                Cannot get the links data. Please check your connection or try
-                to refresh the page
-              </div>
-            </div>
-          </Container>
-        </PageContent>
-      </Page>
-    );
-  }
+  // if (linksDataError) {
+  //   return (
+  //     <Page>
+  //       <PageContent>
+  //         <Container>
+  //           <div className="flex flex-col items-center justify-center  h-[100svh]">
+  //             <div className="text-xl animate-spin">
+  //               Cannot get the links data. Please check your connection or try
+  //               to refresh the page
+  //             </div>
+  //           </div>
+  //         </Container>
+  //       </PageContent>
+  //     </Page>
+  //   );
+  // }
 
   // console.log(links, user);
   return (
@@ -247,13 +277,8 @@ export default function Home() {
           name="twitter:image"
           content="https://strapi.jala.tech/uploads/jalacc_og_image_8fcefe928e.jpg"
         />
-        {/* <script
-          defer
-          src="https://cloud.umami.is/script.js"
-          data-website-id="f479d332-9df1-4719-abc1-ded2eddc020e"
-        /> */}
       </Head>
-      {user && (
+      {session?.user && (
         <Page>
           <PageContent>
             <Container>
@@ -289,25 +314,27 @@ export default function Home() {
                     />
                     <button
                       className={clsx(
-                        isSubmitting ? "bg-slate-300 " : "bg-white",
-                        "absolute right-1.5 bottom-1.5 px-4 py-1 rounded-md border text-sm font-semibold border-slate-200 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed "
+                        isSubmitting
+                          ? "bg-slate-300 "
+                          : "bg-white hover:bg-jala-hover-bg",
+                        "absolute right-1.5 bottom-1.5 px-4 py-1 rounded-md border text-sm font-semibold border-slate-200 disabled:bg-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50 "
                       )}
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !value}
                     >
                       Shorten! 🍤
                     </button>
                   </form>
                 </div>
                 <div className="flex flex-col gap-4 px-4">
-                  {links?.records ? (
-                    links?.records.map((link: any, i: number) => (
+                  {links?.length > 0 ? (
+                    links.map((link: any, i: number) => (
                       <LinkItem key={link.id} linkId={link.id} />
                     ))
                   ) : (
                     <></>
                   )}
-                  {links?.records == 0 ? (
+                  {links?.length <= 0 ? (
                     <div className="px-2 text-slate-600 text-sm text-center">
                       No shortlink. Create your first shortlink by pasting your
                       url on the form above.
@@ -325,3 +352,28 @@ export default function Home() {
     </>
   );
 }
+
+// export const getStaticPaths = async () => {
+//   const { data: pages, error } = await supabase
+//     .from("pages")
+//     .select("*")
+//     .order("link_url", { ascending: true });
+
+//   const paths = pages?.map((page) => ({
+//     params: {
+//       page: page,
+//     },
+//   }));
+
+//   return {
+//     paths,
+//     fallback: "blocking",
+//   };
+// };
+
+// export const getStaticProps = async ({params}) =>{
+//   console.log(params);
+//   return{
+//     param
+//   }
+// }

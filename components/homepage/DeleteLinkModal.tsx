@@ -30,6 +30,8 @@ export function DeleteLinkModal({ link }: any) {
     setIsSubmitting(true);
     const loadingToast = toast.loading("Deleting your link");
     const linkDeleted = await fetch(`api/delete-link?linkId=${link.id}`);
+
+    // console.log(linkDeleted);
     if (linkDeleted.ok) {
       setIsSubmitting(false);
       setIsOpen(false);
@@ -52,7 +54,7 @@ export function DeleteLinkModal({ link }: any) {
         <button
           type="button"
           onClick={openModal}
-          className="rounded-full p-2 bg-red-100 hover:bg-red-200 hidden md:block"
+          className="rounded-full p-2 bg-red-100 hover:bg-red-200"
         >
           <TrashIcon className="w-4 h-4 text-red-500" />
         </button>

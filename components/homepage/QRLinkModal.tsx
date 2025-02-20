@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { useSWRConfig } from "swr";
+// import { useSWRConfig } from "swr";
 import { Fragment, useState } from "react";
 import { QrCodeIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
@@ -16,9 +16,9 @@ export function QRLinkModal({ link }: any) {
   //   shortname: link?.fields?.shortname,
   //   url: link?.fields?.url,
   // });
-  const { mutate } = useSWRConfig();
+  // const { mutate } = useSWRConfig();
 
-  const shortlink = link?.fields?.shortname;
+  const shortlink = link?.shortname;
 
   const downloadQRAsPng = () => {
     const svgElement = svgRef.current;
